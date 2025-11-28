@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
+using GMap.NET.WindowsPresentation;
+using IkanLogger2.Services;
+
 
 namespace IkanLogger2.Views
 {
@@ -20,9 +10,18 @@ namespace IkanLogger2.Views
     /// </summary>
     public partial class DashboardPage : Page
     {
+        private readonly MapService _mapController;
+
         public DashboardPage()
         {
             InitializeComponent();
+
+            _mapController = new MapService();
+
+            // Example: Jakarta
+            _mapController.Configure(MapControl, -6.200000, 106.816666);
+
+            MapControl.Zoom = 15;
         }
     }
 }

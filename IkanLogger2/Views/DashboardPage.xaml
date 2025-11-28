@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
       xmlns:local="clr-namespace:IkanLogger2.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -10,9 +11,17 @@
       Title="DashboardPage">
 
     <Grid>
-        <TextBlock Text="Welcome to the Dashboard!"
-                   FontSize="28"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+        <!-- MAP BACKGROUND -->
+        <gmap:GMapControl x:Name="MapControl"
+                          Zoom="5" />
+
+        <!-- Example overlay -->
+        <!--<Border Background="#80000000" Padding="10">
+            <StackPanel VerticalAlignment="Top">
+                <TextBlock Text="Dashboard"
+                   FontSize="26"
+                   Foreground="White"/>
+            </StackPanel>
+        </Border> -->
     </Grid>
 </Page>
