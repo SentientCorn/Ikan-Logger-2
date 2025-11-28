@@ -12,7 +12,7 @@ namespace IkanLogger2.Core
         public static User CurrentUser { get; set; }
         public static bool IsLoggedIn => CurrentUser != null;
 
-        public void clearSession()
+        public static void clearSession()
         {
             CurrentUser = null;
         }
