@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GMap.NET.Core" Version="2.1.7" />
+    <PackageReference Include="GMap.NET.WinPresentation" Version="2.1.7" />
+    <PackageReference Include="GMap.NET.WPF" Version="1.0.0.1" />
     <None Remove="Artboard 151.png" />
     <None Remove="Public\Fonts\MAUIKEA Demo.otf" />
     <None Remove="Public\Fonts\PlusJakartaSans-Bold.ttf" />
