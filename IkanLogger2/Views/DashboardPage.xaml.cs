@@ -9,13 +9,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Input;
 
 namespace IkanLogger2.Views
 {
     public partial class DashboardPage : Page
     {
         private readonly MapService _mapController;
-
+        private List<FishLocation> _allLocations = new List<FishLocation>();
         public DashboardPage()
         {
             InitializeComponent();
@@ -23,67 +24,101 @@ namespace IkanLogger2.Views
             _mapController = new MapService();
 
             // Set default view ke Laut Selatan Yogyakarta
-            _mapController.Configure(MapControl, -8.0245, 110.3290, 13);
-
-            Loaded += async (s, e) => await LoadPins();
+            _mapController.Configure(MapControl, -8.0245, 110.3290, 11);
+            Loaded += async (s, e) => await LoadDataAndSetupFilter();
         }
 
-        private async Task LoadPins()
+        // Load Data & Siapkan Filter (Dipanggil sekali saat Start)
+        private async Task LoadDataAndSetupFilter()
         {
             try
             {
-                var locations = await FishService.GetFishLocationsAsync();
+                // Ambil data dari database
+                _allLocations = await FishService.GetFishLocationsAsync();
 
-                if (locations == null || locations.Count == 0)
+                if (_allLocations == null || _allLocations.Count == 0)
                 {
                     MessageBox.Show("Tidak ada data lokasi ikan");
                     return;
                 }
 
-                MapControl.Markers.Clear();
+                // --- LOGIKA FILTER ---
+                // 1. Ambil nama-nama ikan unik dari semua lokasi
+                var fishNames = _allLocations
+                    .SelectMany(loc => loc.Fishes) // Ratakan list ikan
+                    .Select(f => f.FishName)       // Ambil namanya saja
+                    .Distinct()                    // Hapus duplikat
+                    .OrderBy(n => n)               // Urutkan abjad
+                    .ToList();
 
-                foreach (var loc in locations)
-                {
-                    // 1. SIAPKAN DATA TOOLTIP (Nama Ikan & Harga)
-                    string tooltipContent = $"Lokasi #{loc.IdLocation}\n";
+                // 2. Tambahkan opsi "Semua Ikan" di paling atas
+                fishNames.Insert(0, "Semua Ikan");
 
-                    if (loc.Fishes != null && loc.Fishes.Count > 0)
-                    {
-                        foreach (var fish in loc.Fishes)
-                        {
-                            // Format: Nama Ikan (Rp Harga)
-                            tooltipContent += $"- {fish.FishName} : Rp {fish.MarketPrice:N0}\n";
-                        }
-                    }
-                    else
-                    {
-                        tooltipContent += "Tidak ada data ikan saat ini.";
-                    }
+                // 3. Masukkan ke ComboBox
+                FishFilterComboBox.ItemsSource = fishNames;
+                FishFilterComboBox.SelectedIndex = 0; // Default pilih "Semua Ikan"
 
-                    PointLatLng center = new PointLatLng(loc.Latitude, loc.Longitude);
-
-                    // 2. BUAT RADIUS 3KM (Menggunakan Polygon agar akurat saat zoom)
-                    var radiusMarker = CreateCirclePolygon(center, 3.0); // 3.0 KM
-                    MapControl.Markers.Add(radiusMarker);
-
-                    // 3. BUAT PIN POINT (Dengan Tooltip)
-                    var pinMarker = CreatePinMarker(center, tooltipContent);
-                    MapControl.Markers.Add(pinMarker);
-                }
-
-                if (locations.Count > 0)
-                {
-                    var firstLoc = locations[0];
-                    MapControl.Position = new PointLatLng(firstLoc.Latitude, firstLoc.Longitude);
-
-                    // Ubah 12 menjadi 15 atau 16 agar tampilan lebih dekat ke titik
-                    MapControl.Zoom = 12;
-                }
-
+                // Render awal (tampilkan semua)
+                RenderMarkers(_allLocations);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading pins: {ex.Message}");
+                MessageBox.Show($"Error loading data: {ex.Message}");
+            }
+        }
+
+        // Method 2: Event saat Dropdown diganti
+        private void FishFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (FishFilterComboBox.SelectedItem is string selectedFish)
+            {
+                List<FishLocation> filteredList;
+
+                if (selectedFish == "Semua Ikan")
+                {
+                    // Jika pilih semua, pakai data master
+                    filteredList = _allLocations;
+                }
+                else
+                {
+                    // Filter lokasi yang memiliki ikan dengan nama tersebut
+                    filteredList = _allLocations
+                        .Where(loc => loc.Fishes.Any(f => f.FishName == selectedFish))
+                        .ToList();
+                }
+
+                // Gambar ulang marker sesuai hasil filter
+                RenderMarkers(filteredList);
+            }
+        }
+
+        // Method 3: Menggambar Marker (Dipisah agar bisa dipanggil ulang)
+        private void RenderMarkers(List<FishLocation> locationsToRender)
+        {
+            MapControl.Markers.Clear();
+            // Sembunyikan panel saat render ulang (misal ganti filter)
+            FishInfoPanel.Visibility = Visibility.Collapsed;
+
+            foreach (var loc in locationsToRender)
+            {
+                // Tooltip tetap dibuat untuk hover cepat
+                string tooltipContent = $"Lokasi #{loc.IdLocation}\nKlik untuk detail.";
+
+                PointLatLng center = new PointLatLng(loc.Latitude, loc.Longitude);
+
+                var radiusMarker = CreateCirclePolygon(center, 3.0);
+                MapControl.Markers.Add(radiusMarker);
+
+                // Pass object 'loc' ke method pembuatan pin
+                var pinMarker = CreatePinMarker(center, tooltipContent, loc);
+                MapControl.Markers.Add(pinMarker);
+            }
+
+            if (locationsToRender.Count > 0)
+            {
+                var firstLoc = locationsToRender[0];
+                MapControl.Position = new PointLatLng(firstLoc.Latitude, firstLoc.Longitude);
+                MapControl.Zoom = 15;
             }
         }
 
@@ -120,18 +155,27 @@ namespace IkanLogger2.Views
             polygon.ZIndex = 1;
 
             return polygon;
-        }   
-        private GMapMarker CreatePinMarker(PointLatLng position, string tooltipText)
+        }
+        private GMapMarker CreatePinMarker(PointLatLng position, string tooltipText, FishLocation data)
         {
             var marker = new GMapMarker(position)
             {
-                ZIndex = 100 // Pin selalu di paling atas
+                ZIndex = 100,
+                Tag = data 
+            };
+            var pinVisual = new Grid
+            {
+                Width = 30,
+                Height = 40,
+                
+                Tag = data,
+                
+                Cursor = Cursors.Hand
             };
 
-            // Visual Pin
-            var pinVisual = new Grid { Width = 30, Height = 40 };
+            // Pasang event handler langsung ke objek visual pin
+            pinVisual.MouseLeftButtonDown += PinVisual_MouseLeftButtonDown;
 
-            // Pointer (Segitiga bawah)
             var pinPointer = new Polygon
             {
                 Fill = Brushes.Red,
@@ -140,7 +184,6 @@ namespace IkanLogger2.Views
                 Points = new PointCollection { new Point(15, 26), new Point(8, 38), new Point(22, 38) }
             };
 
-            // Badan Pin (Lingkaran atas)
             var pinCircle = new Ellipse
             {
                 Width = 26,
@@ -151,7 +194,6 @@ namespace IkanLogger2.Views
                 Margin = new Thickness(2, 0, 2, 14)
             };
 
-            // Dot putih di tengah
             var innerDot = new Ellipse
             {
                 Width = 10,
@@ -164,8 +206,7 @@ namespace IkanLogger2.Views
             pinVisual.Children.Add(pinCircle);
             pinVisual.Children.Add(innerDot);
 
-            // SET TOOLTIP DISINI
-            // ToolTip standar WPF mendukung string multiline
+            // Tooltip tetap ada
             ToolTip toolTipObj = new ToolTip
             {
                 Content = tooltipText,
@@ -177,9 +218,8 @@ namespace IkanLogger2.Views
             };
 
             pinVisual.ToolTip = toolTipObj;
-
             marker.Shape = pinVisual;
-            marker.Offset = new Point(-15, -40); // Offset agar ujung pin pas di koordinat
+            marker.Offset = new Point(-15, -40);
 
             return marker;
         }
@@ -207,6 +247,43 @@ namespace IkanLogger2.Views
                 lat2 * (180.0 / Math.PI),
                 lon2 * (180.0 / Math.PI)
             );
+        }
+
+        // Event Handler saat Pin Visual diklik
+        private void PinVisual_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Ambil objek visual yang diklik (Grid pinVisual)
+            if (sender is Grid pinVisual && pinVisual.Tag is FishLocation loc)
+            {
+                // Cegah event bubbling (agar map tidak ikut ter-drag/klik saat pin diklik)
+                e.Handled = true;
+
+                // 1. Isi Data ke Panel
+                TxtLocationName.Text = $"Koordinat: {loc.Latitude:F4}, {loc.Longitude:F4}";
+
+                if (loc.Fishes != null && loc.Fishes.Count > 0)
+                {
+                    string listIkan = "";
+                    foreach (var fish in loc.Fishes)
+                    {
+                        listIkan += $"• {fish.FishName}\n   Rp {fish.MarketPrice:N0}\n";
+                    }
+                    TxtFishList.Text = listIkan;
+                }
+                else
+                {
+                    TxtFishList.Text = "Tidak ada data ikan.";
+                }
+
+                // 2. Tampilkan Panel
+                FishInfoPanel.Visibility = Visibility.Visible;
+            }
+        }
+
+        // Event Tombol Close pada Panel
+        private void CloseInfoPanel_Click(object sender, RoutedEventArgs e)
+        {
+            FishInfoPanel.Visibility = Visibility.Collapsed;
         }
     }
 }
