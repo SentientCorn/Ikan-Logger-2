@@ -34,13 +34,6 @@
                 <TextBox x:Name="UsernameBox"
                          Margin="0 8"/>
 
-                <!-- Email -->
-                <TextBlock Text="Email"
-                           FontWeight="SemiBold"
-                           Margin="0 4"/>
-                <TextBox x:Name="EmailBox"
-                         Margin="0 8"/>
-
                 <!-- Password -->
                 <TextBlock Text="Password"
                            FontWeight="SemiBold"

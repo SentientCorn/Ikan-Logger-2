@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using IkanLogger2.Services;
+using IkanLogger2.Models;
 
 namespace IkanLogger2.Views
 {
@@ -31,11 +21,42 @@ namespace IkanLogger2.Views
             main.MainFrame.Navigate(new LoginPage());
         }
 
-        private void Create_Click(object sender, RoutedEventArgs e)
+        private async void Create_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Validation & Registration Logic
+            try {
+                string username = UsernameBox.Text;
+                string password = PasswordBox.Password;
+                string confirmPassword = ConfirmPasswordBox.Password;
 
-            MessageBox.Show("Account created successfully!");
+                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                {
+                    MessageBox.Show("Username and password cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (password != confirmPassword)
+                {
+                    MessageBox.Show("Passwords do not match.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                bool success = await UserService.RegisterAsync(username, password);
+
+                    if (success)
+                    {
+                        MessageBox.Show("Registration successful! You can now log in.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Registration failed. Username may already be taken.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+            } catch (System.Exception ex) 
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
 
             var main = (MainWindow)Application.Current.MainWindow;
             main.MainFrame.Navigate(new LoginPage());
