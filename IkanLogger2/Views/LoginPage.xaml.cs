@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using IkanLogger2.Models;
 using IkanLogger2.Services;
+using IkanLogger2.Core;
 
 namespace IkanLogger2.Views
 {
@@ -34,14 +35,15 @@ namespace IkanLogger2.Views
 
             try
             {
-                int userId = await UserService.LoginAsync(username, password);
+                User user = await UserService.LoginAsync(username, password);
 
-                if (userId > 0)
+                if (user.Id > 0)
                 {
                     MessageBox.Show("Login successful!",
                                     "Success",
                                     MessageBoxButton.OK,
                                     MessageBoxImage.Information);
+                    Session.CurrentUser = user;
 
                     var main = (MainWindow)Application.Current.MainWindow;
                     main.MainFrame.Navigate(new DashboardPage());

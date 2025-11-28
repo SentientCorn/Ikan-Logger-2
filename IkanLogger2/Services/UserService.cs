@@ -10,7 +10,7 @@ namespace IkanLogger2.Services
 {
     public static class UserService
     {
-        public static async Task<int> LoginAsync(string username, string password)
+        public static async Task<User> LoginAsync(string username, string password)
         {
             using var conn = await DatabaseService.GetOpenConnectionAsync();
 
@@ -20,7 +20,28 @@ namespace IkanLogger2.Services
             cmd.Parameters.AddWithValue("_username", username);
             cmd.Parameters.AddWithValue("_password", password);
 
-            return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            // This returns the user ID (or 0 / -1 if invalid)
+            var result = await cmd.ExecuteScalarAsync();
+            var userId = Convert.ToInt32(result);
+
+            if (userId <= 0)
+                return null;
+
+            // Fetch the full profile
+            const string profileSql = @"SELECT * FROM get_user_profile(:_id)";
+            using var profileCmd = new NpgsqlCommand(profileSql, conn);
+            profileCmd.Parameters.AddWithValue("_id", userId);
+
+            using var reader = await profileCmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new User(
+                    userId,
+                    reader["username"].ToString()
+                );
+            }
+
+            return null;
         }
 
         public static async Task<bool> RegisterAsync(string username, string password)
