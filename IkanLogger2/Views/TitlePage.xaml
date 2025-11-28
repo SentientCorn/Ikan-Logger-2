@@ -1,0 +1,54 @@
+﻿<Page x:Class="IkanLogger2.Views.TitlePage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IkanLogger2.Views"
+        mc:Ignorable="d"
+        Title="TitlePage">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Public/Images/Artboard 151.png"/>
+        </Grid.Background>
+        <Button x:Name="btnLogin" Content="Login" Margin="348,520,347,0" 
+        Click="Button_Click" Background="{x:Null}" BorderBrush="{x:Null}" 
+        FontFamily="MAUIKEA Demo" FontSize="60" 
+        Cursor="Hand" BorderThickness="0" Padding="0">
+
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#FF1F4F6E"/>
+
+                    <!-- Remove default Windows hover background -->
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+
+                    <!-- Hover change text color -->
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#8BD8F0"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <Label x:Name="lblTitle" Content="Ikan Logger" HorizontalAlignment="Center" Margin="0,305,0,0" VerticalAlignment="Top" Height="150" Width="1000" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF1F4F6E" FontFamily="MAUIKEA Demo" FontSize="150" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label x:Name="lblJunpro" Content="Junior Project" HorizontalAlignment="Left" Margin="65,50,0,0" VerticalAlignment="Top" Height="23" Width="190" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF1F4F6E" FontFamily="MAUIKEA Demo" FontSize="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
+        <Label x:Name="lblTIF" Content="TIF 2025" HorizontalAlignment="Left" Margin="65,80,0,0" VerticalAlignment="Top" Height="23" Width="100" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF1F4F6E" FontFamily="MAUIKEA Demo" FontSize="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
+
+
+    </Grid>
+</Page>
