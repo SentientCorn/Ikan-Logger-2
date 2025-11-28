@@ -1,4 +1,4 @@
-﻿namespace IkanLogger.Models
+﻿namespace IkanLogger2.Models
 {
     public class Location
     {

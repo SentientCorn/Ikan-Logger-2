@@ -1,5 +1,4 @@
-﻿using IkanLogger.Services;
-using IkanLogger2.Models;
+﻿using IkanLogger2.Models;
 using IkanLogger2.Services;
 using Npgsql;
 using System;
@@ -14,22 +13,24 @@ namespace IkanLogger.Services
         {
             using var conn = await DatabaseService.GetOpenConnectionAsync();
 
+            // QUERY BARU: Menggunakan JOIN ke tabel penghubung dan master_fish
             const string sql = @"
                 SELECT 
                     l.idlocation,
                     l.latitude,
                     l.longitude,
-                    f.idfish,
-                    f.fishname,
-                    f.marketprice
+                    mf.idfish,
+                    mf.fishname,
+                    mf.marketprice
                 FROM location l
-                LEFT JOIN fish f ON f.idloc = l.idlocation
+                LEFT JOIN fishlocation map ON map.locid  = l.idlocation
+                LEFT JOIN fish mf ON mf.idfish = map.fishid
                 ORDER BY l.idlocation;
             ";
 
             using var cmd = new NpgsqlCommand(sql, conn);
-
             var result = new List<FishLocation>();
+
             FishLocation current = null;
             int lastLocation = -1;
 
@@ -38,7 +39,7 @@ namespace IkanLogger.Services
             {
                 int idLoc = Convert.ToInt32(reader["idlocation"]);
 
-                // Jika lokasi baru → buat entri baru
+                // Logika Grouping: Jika lokasi berubah, buat objek lokasi baru
                 if (idLoc != lastLocation)
                 {
                     current = new FishLocation
@@ -53,7 +54,7 @@ namespace IkanLogger.Services
                     lastLocation = idLoc;
                 }
 
-                // Jika ada data ikan
+                // Jika ada data ikan (karena LEFT JOIN bisa null jika lokasi tidak ada ikannya)
                 if (reader["idfish"] != DBNull.Value)
                 {
                     current.Fishes.Add(new Fish
@@ -61,7 +62,7 @@ namespace IkanLogger.Services
                         IdFish = Convert.ToInt32(reader["idfish"]),
                         FishName = reader["fishname"].ToString(),
                         MarketPrice = Convert.ToDouble(reader["marketprice"]),
-                        IdLocation = idLoc
+                        // IdLocation di dalam objek Fish tidak perlu diisi lagi karena sudah di-handle parent
                     });
                 }
             }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IkanLogger2.Models;
 
-namespace IkanLogger.Models
+namespace IkanLogger2.Models
 {
     public class CatchLog
     {

@@ -22,9 +22,8 @@ namespace IkanLogger2.Views
             InitializeComponent();
 
             _mapController = new MapService();
-
-            // Set default view ke Laut Selatan Yogyakarta
             _mapController.Configure(MapControl, -8.0245, 110.3290, 11);
+
             Loaded += async (s, e) => await LoadDataAndSetupFilter();
         }
 
@@ -43,7 +42,6 @@ namespace IkanLogger2.Views
                 }
 
                 // --- LOGIKA FILTER ---
-                // 1. Ambil nama-nama ikan unik dari semua lokasi
                 var fishNames = _allLocations
                     .SelectMany(loc => loc.Fishes) // Ratakan list ikan
                     .Select(f => f.FishName)       // Ambil namanya saja
@@ -51,12 +49,10 @@ namespace IkanLogger2.Views
                     .OrderBy(n => n)               // Urutkan abjad
                     .ToList();
 
-                // 2. Tambahkan opsi "Semua Ikan" di paling atas
                 fishNames.Insert(0, "Semua Ikan");
 
-                // 3. Masukkan ke ComboBox
                 FishFilterComboBox.ItemsSource = fishNames;
-                FishFilterComboBox.SelectedIndex = 0; // Default pilih "Semua Ikan"
+                FishFilterComboBox.SelectedIndex = 0;
 
                 // Render awal (tampilkan semua)
                 RenderMarkers(_allLocations);
@@ -67,7 +63,7 @@ namespace IkanLogger2.Views
             }
         }
 
-        // Method 2: Event saat Dropdown diganti
+        // Event saat Dropdown diganti
         private void FishFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (FishFilterComboBox.SelectedItem is string selectedFish)
@@ -76,34 +72,28 @@ namespace IkanLogger2.Views
 
                 if (selectedFish == "Semua Ikan")
                 {
-                    // Jika pilih semua, pakai data master
                     filteredList = _allLocations;
                 }
                 else
                 {
-                    // Filter lokasi yang memiliki ikan dengan nama tersebut
                     filteredList = _allLocations
                         .Where(loc => loc.Fishes.Any(f => f.FishName == selectedFish))
                         .ToList();
                 }
-
                 // Gambar ulang marker sesuai hasil filter
                 RenderMarkers(filteredList);
             }
         }
 
-        // Method 3: Menggambar Marker (Dipisah agar bisa dipanggil ulang)
+        // Menggambar Marker (Dipisah agar bisa dipanggil ulang)
         private void RenderMarkers(List<FishLocation> locationsToRender)
         {
             MapControl.Markers.Clear();
-            // Sembunyikan panel saat render ulang (misal ganti filter)
             FishInfoPanel.Visibility = Visibility.Collapsed;
 
             foreach (var loc in locationsToRender)
             {
-                // Tooltip tetap dibuat untuk hover cepat
                 string tooltipContent = $"Lokasi #{loc.IdLocation}\nKlik untuk detail.";
-
                 PointLatLng center = new PointLatLng(loc.Latitude, loc.Longitude);
 
                 var radiusMarker = CreateCirclePolygon(center, 3.0);
@@ -118,7 +108,7 @@ namespace IkanLogger2.Views
             {
                 var firstLoc = locationsToRender[0];
                 MapControl.Position = new PointLatLng(firstLoc.Latitude, firstLoc.Longitude);
-                MapControl.Zoom = 15;
+                MapControl.Zoom = 12;
             }
         }
 
@@ -137,15 +127,12 @@ namespace IkanLogger2.Views
 
             var polygon = new GMapPolygon(points);
 
-            // --- PERBAIKAN DI SINI ---
-            // Cek apakah polygon.Shape null. Jika ya, kita inisialisasi manual.
             Path shape = polygon.Shape as Path;
             if (shape == null)
             {
                 shape = new Path();
                 polygon.Shape = shape;
             }
-            // -------------------------
 
             // Sekarang aman untuk mengakses properti shape
             shape.Fill = new SolidColorBrush(Color.FromArgb(40, 0, 120, 215));
