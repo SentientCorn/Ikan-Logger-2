@@ -13,7 +13,7 @@
     <Grid>
         <!-- MAP BACKGROUND -->
         <gmap:GMapControl x:Name="MapControl"
-                          Zoom="5" />
+                          Zoom="10" />
 
         <!-- Example overlay -->
         <!--<Border Background="#80000000" Padding="10">
