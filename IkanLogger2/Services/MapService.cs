@@ -7,7 +7,7 @@ namespace IkanLogger2.Services
 {
     public class MapService
     {
-        public void Configure(GMapControl mapControl, double latitude, double longitude, int zoomLevel = 15)
+        public void Configure(GMapControl mapControl, double latitude, double longitude, int zoomLevel = 12)
         {
             // Required GMap settings
             GMapProvider.UserAgent = "FishingMapApp/1.0";
@@ -29,6 +29,8 @@ namespace IkanLogger2.Services
             mapControl.DragButton = System.Windows.Input.MouseButton.Left;
             mapControl.CanDragMap = true;
             mapControl.MouseWheelZoomEnabled = true;
+
+            mapControl.IgnoreMarkerOnMouseWheel = true;
         }
     }
 }
