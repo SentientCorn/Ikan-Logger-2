@@ -238,13 +238,12 @@ namespace IkanLogger2.Views
         }
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = LogoutMessageBox.Show(
                 "Apakah Anda yakin ingin logout?",
                 "Konfirmasi Logout",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
+                LogoutMessageBox.MessageBoxButton.YesNo);
 
-            if (result == MessageBoxResult.Yes)
+            if (result == LogoutMessageBox.MessageBoxResult.Yes)
             {
                 // Clear session
                 Session.CurrentUser = null;
@@ -252,8 +251,8 @@ namespace IkanLogger2.Views
                 // Redirect ke Login page
                 NavigationService?.Navigate(new Uri("Views/LoginPage.xaml", UriKind.Relative));
 
-                MessageBox.Show("Anda berhasil logout.", "Logout",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                LogoutMessageBox.Show("Anda berhasil logout.", "Logout",
+                    LogoutMessageBox.MessageBoxButton.OK);
             }
         }
     }

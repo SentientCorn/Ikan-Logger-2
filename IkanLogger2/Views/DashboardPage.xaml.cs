@@ -567,7 +567,7 @@ namespace IkanLogger2.Views
         {
             if (SelectedLatitude == 0 && SelectedLongitude == 0)
             {
-                MessageBox.Show("Silakan pilih lokasi pada peta dengan klik kanan terlebih dahulu.");
+                CustomMessageBox.Show("Silakan pilih lokasi pada peta dengan klik kanan terlebih dahulu.");
                 return;
             }
             NavigationService?.Navigate(new CreateLogPage(SelectedLatitude, SelectedLongitude));
