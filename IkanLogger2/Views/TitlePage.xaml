@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IkanLogger2.Views"
         mc:Ignorable="d"
+        d:DesignHeight="1080" d:DesignWidth="1920"
         Title="TitlePage">
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/Public/Images/Artboard 151.png"/>
+            <ImageBrush ImageSource="/Public/Images/Artboard 151.png" Stretch="UniformToFill"/>
         </Grid.Background>
         <Button x:Name="btnLogin" Content="Login" Margin="348,520,347,0" 
         Click="Button_Click" Background="{x:Null}" BorderBrush="{x:Null}" 
