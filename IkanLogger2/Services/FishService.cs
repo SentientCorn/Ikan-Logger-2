@@ -68,5 +68,28 @@ namespace IkanLogger2.Services
 
             return result;
         }
+
+        public static async Task<List<Fish>> GetAllFishAsync()
+        {
+            var fishes = new List<Fish>();
+
+            using var conn = await DatabaseService.GetOpenConnectionAsync();
+            const string sql = "SELECT idfish, fishname, marketprice FROM Fish ORDER BY fishname";
+
+            using var cmd = new NpgsqlCommand(sql, conn);
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                fishes.Add(new Fish
+                {
+                    IdFish = Convert.ToInt32(reader["idfish"]),
+                    FishName = reader["fishname"].ToString(),
+                    MarketPrice = Convert.ToDouble(reader["marketprice"])
+                });
+            }
+
+            return fishes;
+        }
     }
 }
