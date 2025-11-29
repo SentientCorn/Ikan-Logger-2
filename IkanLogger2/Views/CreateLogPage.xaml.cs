@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,23 +51,10 @@ namespace IkanLogger2.Views
             }
         }
 
-        // Handle placeholder untuk Notes
-        private void TxtNotes_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TxtNotesPlaceholder.Visibility = string.IsNullOrEmpty(TxtNotes.Text)
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
         // Autocomplete untuk pencarian ikan
         private void TxtFishSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             Console.WriteLine($"Text changed: {TxtFishSearch.Text}");
-
-            // Handle placeholder
-            TxtFishSearchPlaceholder.Visibility = string.IsNullOrEmpty(TxtFishSearch.Text)
-                ? Visibility.Visible
-                : Visibility.Collapsed;
 
             // Autocomplete logic
             string searchText = TxtFishSearch.Text.ToLower();
@@ -129,6 +117,8 @@ namespace IkanLogger2.Views
             SelectedFishDisplay.Visibility = Visibility.Collapsed;
             UpdateAddButtonState();
         }
+
+        // Method untuk Weight - validasi dan format input
         private void TxtWeight_TextChanged(object sender, TextChangedEventArgs e)
         {
             // Get current cursor position
@@ -166,37 +156,26 @@ namespace IkanLogger2.Views
                 TxtWeight.SelectionStart = Math.Min(cursorPosition, cleaned.Length);
             }
 
+            // Update button state
             UpdateAddButtonState();
         }
 
         private void UpdateAddButtonState()
         {
             bool isValidWeight = !string.IsNullOrWhiteSpace(TxtWeight.Text) &&
-                                     double.TryParse(
-                                         TxtWeight.Text,
-                                         NumberStyles.AllowDecimalPoint,
-                                         CultureInfo.InvariantCulture,
-                                         out double weight) &&
-                                     weight > 0;
+                                 double.TryParse(
+                                     TxtWeight.Text,
+                                     NumberStyles.AllowDecimalPoint,
+                                     CultureInfo.InvariantCulture,
+                                     out double weight) &&
+                                 weight > 0;
 
             BtnAddFish.IsEnabled = _selectedFish != null && isValidWeight;
         }
 
-        // Handle placeholder untuk Weight
-        private void TxtWeight_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            // Handle placeholder
-            TxtWeightPlaceholder.Visibility = string.IsNullOrEmpty(TxtWeight.Text)
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-            // Validation logic
-            UpdateAddButtonState();
-        }
-
         private void BtnAddFish_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedFish == null )
+            if (_selectedFish == null)
             {
                 CustomMessageBox.Show(
                     "Pilih ikan dan masukkan berat yang valid",
@@ -210,10 +189,10 @@ namespace IkanLogger2.Views
                         CultureInfo.InvariantCulture,
                         out double weight) || weight <= 0)
             {
-                MessageBox.Show("Masukkan berat yang valid (contoh: 10.5 atau 10,5)",
-                              "Input Tidak Valid",
-                              MessageBoxButton.OK,
-                              MessageBoxImage.Warning);
+                CustomMessageBox.Show(
+                    "Masukkan berat yang valid (contoh: 10.5 atau 10,5)",
+                    "Input Tidak Valid",
+                    CustomMessageBox.MessageBoxButton.OK);
                 return;
             }
 
