@@ -32,14 +32,14 @@
                     Padding="40,20"
                     MinWidth="250"
                     BorderThickness="3" BorderBrush="#FF1F4F6E">
-                    <TextBlock Text="PROFILE" 
+                <TextBlock Text="PROFILE" 
                         FontFamily="MAUIKEA Demo"
                         FontSize="36" 
                         FontWeight="Bold"
                         Foreground="#FF1F4F6E"
                         HorizontalAlignment="Center"/>
-                    </Border>
-                    <Border 
+            </Border>
+            <Border 
                         Background="White"
                         Padding="40"
                         CornerRadius="20"
@@ -75,7 +75,7 @@
                     </TextBox>
 
                     <!-- PASSWORD -->
-                    <TextBlock Text="Password"
+                    <TextBlock Text="Password "
                          FontFamily="Plus Jakarta Sans Medium"
                          FontSize="20"
                          Margin="0 0 0 8"
@@ -94,6 +94,8 @@
 
                     <!-- Save BUTTON -->
                     <Button Content="Save"
+                        x:Name="SaveButton"
+                        Click="SaveButton_Click"
                         FontFamily="Plus Jakarta Sans"
                         FontSize="20"
                         FontWeight="Bold"
