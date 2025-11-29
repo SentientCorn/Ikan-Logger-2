@@ -66,6 +66,7 @@ namespace IkanLogger2.Views
 
                 // Render awal (tampilkan semua)
                 RenderMarkers(_allLocations);
+                ResetTempMarker();
 
                 await LoadRecentLogs(Session.CurrentUser.Id);
             }
@@ -403,6 +404,19 @@ namespace IkanLogger2.Views
 
             return marker;
         }
+
+        private void ResetTempMarker()
+        {
+            if (_tempMarker != null)
+            {
+                MapControl.Markers.Remove(_tempMarker);
+                _tempMarker = null;
+            }
+
+            SelectedLatitude = 0;
+            SelectedLongitude = 0;
+        }
+
 
         private GMapMarker CreateLogMarker(PointLatLng position, CatchLog log)
         {
