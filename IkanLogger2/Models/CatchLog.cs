@@ -15,5 +15,9 @@ namespace IkanLogger2.Models
         public User? iduser { get; set; }
         public double totalweight { get; set; }
         public double totalprice { get; set; }
+
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+
     }
 }

@@ -22,7 +22,7 @@
             <!-- MAP AREA (Full Width) -->
             <Grid Grid.Column="0">
                 <!-- MAP BACKGROUND -->
-                <gmap:GMapControl x:Name="MapControl" Zoom="10" />
+                <gmap:GMapControl x:Name="MapControl" Zoom="10" MouseRightButtonDown="MapControl_MouseRightButtonDown" />
 
                 <!-- Filter Box -->
                 <Border HorizontalAlignment="Left" VerticalAlignment="Top" 

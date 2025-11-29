@@ -20,10 +20,14 @@ namespace IkanLogger2.Views
         private List<Fish> _allFishes = new List<Fish>();
         private Fish _selectedFish = null;
         private List<TempCatchItem> _catchItems = new List<TempCatchItem>();
+        private double _lat;
+        private double _lng;
 
-        public CreateLogPage()
+        public CreateLogPage(double latitude, double longitude)
         {
             InitializeComponent();
+            _lat = latitude;
+            _lng = longitude;
             Loaded += async (s, e) => await LoadFishData();
         }
 
@@ -315,6 +319,8 @@ namespace IkanLogger2.Views
                 bool success = await LogService.CreateCatchLogAsync(
                     Session.CurrentUser.Id,
                     notes,
+                    _lat,
+                    _lng,
                     catches
                 );
 
