@@ -418,14 +418,7 @@ namespace IkanLogger2.Views
 
         private void BtnCreateNewLog_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implementasi navigasi ke halaman create log
-            MessageBox.Show("Fitur buat catatan baru akan segera hadir!",
-                            "Info",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-
-            // Nanti bisa diganti dengan:
-            // NavigationService?.Navigate(new CreateLogPage());
+            NavigationService?.Navigate(new CreateLogPage());
         }
 
         private void Records_Click(object sender, RoutedEventArgs e)
