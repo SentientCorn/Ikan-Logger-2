@@ -103,22 +103,27 @@ namespace IkanLogger2.Services
             return logsDict.Values.ToList();
         }
 
-        public static async Task<bool> CreateCatchLog(int userid, string notes, List<FishCatchInput> catches)
+        // Replace the CreateCatchLog method in LogService.cs with this async version:
+
+        public static async Task<bool> CreateCatchLogAsync(int userid, string notes, List<FishCatchInput> catches)
         {
-            using var conn = await DatabaseService.GetOpenConnectionAsync();
-            using var transaction = await conn.BeginTransactionAsync();
+            NpgsqlConnection conn = null;
+            NpgsqlTransaction transaction = null;
 
             try
             {
-                // Hitung total weight dan total price
+                conn = await DatabaseService.GetOpenConnectionAsync();
+                transaction = await conn.BeginTransactionAsync();
+
+                // Calculate totals
                 double totalWeight = catches.Sum(c => c.Weight);
                 double totalPrice = catches.Sum(c => c.SalePrice);
 
                 // Insert CatchLog
                 const string logSql = @"
-                INSERT INTO CatchLog (logdate, notes, iduser, totalweight, totalprice)
-                VALUES (@LogDate, @Notes, @UserId, @TotalWeight, @TotalPrice)
-                RETURNING idlog";
+                    INSERT INTO CatchLog (logdate, notes, iduser, totalweight, totalprice)
+                    VALUES (@LogDate, @Notes, @UserId, @TotalWeight, @TotalPrice)
+                    RETURNING idlog";
 
                 int logId;
                 using (var logCmd = new NpgsqlCommand(logSql, conn, transaction))
@@ -132,29 +137,77 @@ namespace IkanLogger2.Services
                     logId = Convert.ToInt32(await logCmd.ExecuteScalarAsync());
                 }
 
-                // Insert FishCatch untuk setiap ikan
-                const string catchSql = @"
-                INSERT INTO FishCatch (weight, fishid, idlog, saleprice)
-                VALUES (@Weight, @FishId, @LogId, @SalePrice)";
+                // Insert FishCatch entries
 
-                foreach (var catchItem in catches)
+                if (catches.Count > 0)
                 {
-                    using var catchCmd = new NpgsqlCommand(catchSql, conn, transaction);
-                    catchCmd.Parameters.AddWithValue("@Weight", catchItem.Weight);
-                    catchCmd.Parameters.AddWithValue("@FishId", catchItem.FishId);
-                    catchCmd.Parameters.AddWithValue("@LogId", logId);
-                    catchCmd.Parameters.AddWithValue("@SalePrice", catchItem.SalePrice);
+                    var sqlBuilder = new StringBuilder();
+                    sqlBuilder.Append("INSERT INTO FishCatch (weight, fishid, idlog, saleprice) VALUES ");
 
-                    await catchCmd.ExecuteNonQueryAsync();
+                    var valuesList = new List<string>();
+
+                    await using (var catchCmd = new NpgsqlCommand())
+                    {
+                        catchCmd.Connection = conn;
+                        catchCmd.Transaction = transaction;
+
+                        for (int i = 0; i < catches.Count; i++)
+                        {
+                            var catchItem = catches[i];
+                            valuesList.Add($"(@Weight{i}, @FishId{i}, @LogId{i}, @SalePrice{i})");
+
+                            catchCmd.Parameters.AddWithValue($"@Weight{i}", catchItem.Weight);
+                            catchCmd.Parameters.AddWithValue($"@FishId{i}", catchItem.FishId);
+                            catchCmd.Parameters.AddWithValue($"@LogId{i}", logId);
+                            catchCmd.Parameters.AddWithValue($"@SalePrice{i}", catchItem.SalePrice);
+                        }
+
+                        sqlBuilder.Append(string.Join(", ", valuesList));
+                        catchCmd.CommandText = sqlBuilder.ToString();
+
+                        await catchCmd.ExecuteNonQueryAsync();
+                    }
                 }
-
                 await transaction.CommitAsync();
                 return true;
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                throw new Exception($"Error creating catch log: {ex.Message}");
+                // Safely rollback transaction
+                if (transaction != null)
+                {
+                    try
+                    {
+                        await transaction.RollbackAsync().ConfigureAwait(false);
+                    }
+                    catch
+                    {
+                        // Ignore rollback errors - connection may already be broken
+                    }
+                }
+
+                throw new Exception($"Error creating catch log: {ex.Message}", ex);
+            }
+            finally
+            {
+                // Ensure connection is properly closed
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                }
+                if (conn != null)
+                {
+                    try
+                    {
+                        // Make sure connection is closed before disposing
+                        if (conn.State == System.Data.ConnectionState.Open)
+                        {
+                            await conn.CloseAsync();
+                        }
+                        await conn.DisposeAsync();
+                    }
+                    catch { }
+                }
             }
         }
 

@@ -12,15 +12,43 @@ namespace IkanLogger2.Services
                             "Database=postgres;" +
                             "SSL Mode=Require;" +
                             "Trust Server Certificate=true;" +
-                            "Timeout=15;" +
-                            "CommandTimeout=15;" +
-                            "Pooling=false;";
+                            "Timeout=30;" +
+                            "CommandTimeout=30;" +
+                            "Pooling=false;" +           // Enable pooling
+                            "MinPoolSize=0;" +          // Minimum connections
+                            "MaxPoolSize=100;";         // Maximum connections
 
         public static async Task<NpgsqlConnection> GetOpenConnectionAsync()
         {
-            var conn = new NpgsqlConnection(connString);
-            await conn.OpenAsync();
-            return conn;
+            try
+            {
+                var conn = new NpgsqlConnection(connString);
+                await conn.OpenAsync();
+                return conn;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to connect to database: {ex.Message}", ex);
+            }
+        }
+
+        public static NpgsqlConnection GetOpenConnection()
+        {
+            try
+            {
+                var conn = new NpgsqlConnection(connString);
+                conn.Open();
+                return conn;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to connect to database: {ex.Message}", ex);
+            }
+        }
+
+        public static string GetConnectionString()
+        {
+            return connString;
         }
     }
 
