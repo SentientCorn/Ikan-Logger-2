@@ -24,23 +24,23 @@ namespace IkanLogger2.Views
         {
             try
             {
-                // Validasi session user
-                //if (Session.CurrentUser == null || Session.CurrentUser.Id <= 0)
-                //{
-                //    MessageBox.Show("Silakan login terlebih dahulu",
-                //                  "Session Error",
-                //                  MessageBoxButton.OK,
-                //                  MessageBoxImage.Warning);
-                //    NavigationService?.Navigate(new LoginPage());
-                //    return;
-                //}
+                //Validasi session user
+                if (Session.CurrentUser == null || Session.CurrentUser.Id <= 0)
+                {
+                    MessageBox.Show("Silakan login terlebih dahulu",
+                                  "Session Error",
+                                  MessageBoxButton.OK,
+                                  MessageBoxImage.Warning);
+                    NavigationService?.Navigate(new LoginPage());
+                    return;
+                }
 
                 // Show loading
                 LoadingPanel.Visibility = Visibility.Visible;
                 RecordsContainer.Children.Clear();
 
                 // Load data
-                var logs = await LogService.GetAllLogs(1);//Session.CurrentUser.Id
+                var logs = await LogService.GetAllLogs(Session.CurrentUser.Id);
 
                 // Hide loading
                 LoadingPanel.Visibility = Visibility.Collapsed;
