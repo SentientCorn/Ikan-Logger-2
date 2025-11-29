@@ -17,6 +17,15 @@ namespace IkanLogger2.Views
     public partial class DashboardPage : Page
     {
         private readonly MapService _mapController;
+        private GMapMarker _tempMarker;
+        public double SelectedLongitude { get; private set; }
+        public double SelectedLatitude { get; private set; }
+
+        private const string PERMANENT_MARKER_TAG = "PERMANENT_MARKER";
+        private const string TEMPORARY_MARKER_TAG = "TEMPORARY_MARKER";
+        private const string LOG_MARKER_TAG = "LOG_MARKER";
+
+
         private List<FishLocation> _allLocations = new List<FishLocation>();
         public DashboardPage()
         {
@@ -57,6 +66,7 @@ namespace IkanLogger2.Views
 
                 // Render awal (tampilkan semua)
                 RenderMarkers(_allLocations);
+                ResetTempMarker();
 
                 await LoadRecentLogs(Session.CurrentUser.Id);
             }
@@ -75,6 +85,14 @@ namespace IkanLogger2.Views
 
                 RecentLogsContainer.Children.Clear();
 
+                // Remove all previous log markers ONCE
+                var oldLogs = MapControl.Markers
+                    .Where(m => m.Tag is string tag && tag == LOG_MARKER_TAG)
+                    .ToList();
+
+                foreach (var old in oldLogs)
+                    MapControl.Markers.Remove(old);
+
                 if (logs == null || logs.Count == 0)
                 {
                     var emptyText = new TextBlock
@@ -91,9 +109,21 @@ namespace IkanLogger2.Views
 
                 foreach (var log in logs)
                 {
+                    // Skip logs with no coordinates
+                    if (log.latitude == 0 && log.longitude == 0)
+                        continue;
+
+                    // Create UI card
                     var logCard = CreateLogCard(log);
                     RecentLogsContainer.Children.Add(logCard);
+
+                    // Create and add map marker
+                    var position = new PointLatLng(log.latitude, log.longitude);
+                    var marker = CreateLogMarker(position, log);
+                    MapControl.Markers.Add(marker);
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -235,9 +265,20 @@ namespace IkanLogger2.Views
         }
 
         // Menggambar Marker (Dipisah agar bisa dipanggil ulang)
+
+
         private void RenderMarkers(List<FishLocation> locationsToRender)
         {
-            MapControl.Markers.Clear();
+            // Remove only previous permanent markers (keep temp marker if present)
+            var toRemove = MapControl.Markers
+                .Where(m => m.Tag is string tag && tag == PERMANENT_MARKER_TAG)
+                .ToList();
+
+            foreach (var m in toRemove)
+            {
+                MapControl.Markers.Remove(m);
+            }
+
             FishInfoPanel.Visibility = Visibility.Collapsed;
 
             foreach (var loc in locationsToRender)
@@ -246,10 +287,13 @@ namespace IkanLogger2.Views
                 PointLatLng center = new PointLatLng(loc.Latitude, loc.Longitude);
 
                 var radiusMarker = CreateCirclePolygon(center, 3.0);
+                // mark polygon (if you want to identify it later, set Tag too)
+                radiusMarker.Tag = PERMANENT_MARKER_TAG;
                 MapControl.Markers.Add(radiusMarker);
 
-                // Pass object 'loc' ke method pembuatan pin
                 var pinMarker = CreatePinMarker(center, tooltipContent, loc);
+                // mark the pin as permanent so we can remove it later without touching temp marker
+                pinMarker.Tag = PERMANENT_MARKER_TAG;
                 MapControl.Markers.Add(pinMarker);
             }
 
@@ -260,6 +304,7 @@ namespace IkanLogger2.Views
                 MapControl.Zoom = 12;
             }
         }
+
 
         // Method Baru: Membuat Lingkaran Geografis (Polygon)
         private GMapMarker CreateCirclePolygon(PointLatLng center, double radiusKm)
@@ -360,6 +405,68 @@ namespace IkanLogger2.Views
             return marker;
         }
 
+        private void ResetTempMarker()
+        {
+            if (_tempMarker != null)
+            {
+                MapControl.Markers.Remove(_tempMarker);
+                _tempMarker = null;
+            }
+
+            SelectedLatitude = 0;
+            SelectedLongitude = 0;
+        }
+
+
+        private GMapMarker CreateLogMarker(PointLatLng position, CatchLog log)
+        {
+            var marker = new GMapMarker(position)
+            {
+                ZIndex = 500,
+                Tag = LOG_MARKER_TAG
+            };
+
+            // Simple circular log marker
+            var visual = new Ellipse
+            {
+                Width = 18,
+                Height = 18,
+                Fill = new SolidColorBrush(Color.FromRgb(0, 120, 215)), // Blue
+                Stroke = Brushes.White,
+                StrokeThickness = 2,
+                Cursor = Cursors.Hand
+            };
+
+            // Tooltip: show date + notes
+            visual.ToolTip = new ToolTip
+            {
+                Content = $"{log.logdate:dd MMM yyyy}\n{log.notes}",
+                Padding = new Thickness(5),
+                Background = Brushes.White,
+                Foreground = Brushes.Black
+            };
+
+            // Event handler when the log marker is clicked
+            visual.MouseLeftButtonDown += (s, e) =>
+            {
+                e.Handled = true;
+
+                TxtLocationName.Text = $"Log di {position.Lat:F4}, {position.Lng:F4}";
+                TxtFishList.Text =
+                    $"Catatan:\n{log.notes}\n\n" +
+                    $"Berat Total: {log.totalweight:N2} kg\n" +
+                    $"Harga Total: Rp {log.totalprice:N0}";
+
+                FishInfoPanel.Visibility = Visibility.Visible;
+            };
+
+            marker.Shape = visual;
+            marker.Offset = new Point(-9, -9);
+
+            return marker;
+        }
+
+
         // Method Helper: Rumus Haversine untuk mencari koordinat baru berdasarkan jarak
         private PointLatLng CalculatePointAtDistance(PointLatLng center, double distanceKm, double bearing)
         {
@@ -416,6 +523,40 @@ namespace IkanLogger2.Views
             }
         }
 
+        private void MapControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        { 
+            var pos = e.GetPosition(MapControl);
+            var latLng = MapControl.FromLocalToLatLng((int)pos.X, (int)pos.Y);
+
+            SelectedLatitude = latLng.Lat;
+            SelectedLongitude = latLng.Lng;
+
+            if (_tempMarker == null)
+            {
+                _tempMarker = new GMapMarker(latLng)
+                {
+                    ZIndex = 9999,               // high z so it sits above regular markers
+                    Tag = TEMPORARY_MARKER_TAG,
+                    Shape = new Ellipse
+                    {
+                        Width = 14,
+                        Height = 14,
+                        Fill = Brushes.Orange,
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 1
+                    },
+                    Offset = new Point(-7, -7)
+                };
+                MapControl.Markers.Add(_tempMarker);
+
+            }
+
+            else
+            {
+                _tempMarker.Position = latLng;
+            }
+        }
+
         // Event Tombol Close pada Panel
         private void CloseInfoPanel_Click(object sender, RoutedEventArgs e)
         {
@@ -424,7 +565,12 @@ namespace IkanLogger2.Views
 
         private void BtnCreateNewLog_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new CreateLogPage());
+            if (SelectedLatitude == 0 && SelectedLongitude == 0)
+            {
+                MessageBox.Show("Silakan pilih lokasi pada peta dengan klik kanan terlebih dahulu.");
+                return;
+            }
+            NavigationService?.Navigate(new CreateLogPage(SelectedLatitude, SelectedLongitude));
         }
 
         private void Records_Click(object sender, RoutedEventArgs e)

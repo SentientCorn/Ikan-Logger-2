@@ -32,5 +32,9 @@ namespace IkanLogger2.Services
 
             mapControl.IgnoreMarkerOnMouseWheel = true;
         }
+
+        public void AddMarker(GMapControl mapControl, double lat, double lng) { }
+
+
     }
 }

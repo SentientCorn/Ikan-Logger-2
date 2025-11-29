@@ -17,7 +17,7 @@ namespace IkanLogger2.Services
             using var conn = await DatabaseService.GetOpenConnectionAsync();
 
             const string sql = @"
-            SELECT logdate, notes, totalweight, totalprice 
+            SELECT logdate, notes, totalweight, totalprice, latitude, longitude
             FROM catchlog 
             WHERE iduser = @uid
             ORDER BY logdate DESC 
@@ -36,6 +36,8 @@ namespace IkanLogger2.Services
                     notes = reader["notes"].ToString(),
                     totalweight = Convert.ToDouble(reader["totalweight"]),
                     totalprice = Convert.ToDouble(reader["totalprice"]),
+                    latitude = Convert.ToDouble(reader["latitude"]),
+                    longitude = Convert.ToDouble(reader["longitude"])
                 });
             }
             return logs;
@@ -55,6 +57,8 @@ namespace IkanLogger2.Services
                 cl.notes,
                 cl.totalweight,
                 cl.totalprice,
+                cl.latitude,
+                cl.longitude,
                 fc.idfishcatch,
                 fc.weight,
                 fc.saleprice,
@@ -83,6 +87,8 @@ namespace IkanLogger2.Services
                         notes = reader["notes"].ToString(),
                         totalweight = Convert.ToDouble(reader["totalweight"]),
                         totalprice = Convert.ToDouble(reader["totalprice"]),
+                        latitude = reader["latitude"] is DBNull ? 0 : Convert.ToDouble(reader["latitude"]),
+                        longitude = reader["longitude"] is DBNull ? 0 : Convert.ToDouble(reader["longitude"]),
                         Catches = new List<FishCatchDetail>()
                     };
                 }
@@ -105,7 +111,7 @@ namespace IkanLogger2.Services
 
         // Replace the CreateCatchLog method in LogService.cs with this async version:
 
-        public static async Task<bool> CreateCatchLogAsync(int userid, string notes, List<FishCatchInput> catches)
+        public static async Task<bool> CreateCatchLogAsync(int userid, string notes, double lat, double lng, List<FishCatchInput> catches)
         {
             NpgsqlConnection conn = null;
             NpgsqlTransaction transaction = null;
@@ -121,9 +127,10 @@ namespace IkanLogger2.Services
 
                 // Insert CatchLog
                 const string logSql = @"
-                    INSERT INTO CatchLog (logdate, notes, iduser, totalweight, totalprice)
-                    VALUES (@LogDate, @Notes, @UserId, @TotalWeight, @TotalPrice)
+                    INSERT INTO CatchLog (logdate, notes, iduser, totalweight, totalprice, latitude, longitude)
+                    VALUES (@LogDate, @Notes, @UserId, @TotalWeight, @TotalPrice, @Latitude, @Longitude)
                     RETURNING idlog";
+
 
                 int logId;
                 using (var logCmd = new NpgsqlCommand(logSql, conn, transaction))
@@ -133,6 +140,9 @@ namespace IkanLogger2.Services
                     logCmd.Parameters.AddWithValue("@UserId", userid);
                     logCmd.Parameters.AddWithValue("@TotalWeight", totalWeight);
                     logCmd.Parameters.AddWithValue("@TotalPrice", totalPrice);
+                    logCmd.Parameters.AddWithValue("@Latitude", lat);
+                    logCmd.Parameters.AddWithValue("@Longitude", lng);
+
 
                     logId = Convert.ToInt32(await logCmd.ExecuteScalarAsync());
                 }

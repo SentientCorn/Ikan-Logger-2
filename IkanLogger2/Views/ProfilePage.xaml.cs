@@ -163,14 +163,9 @@ namespace IkanLogger2.Views
             DashboardView.Visibility = Visibility.Visible;
             EditProfileView.Visibility = Visibility.Collapsed;
 
-            // Update button styles
-            BtnDashboard.Background = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF1F4F6E"));
-            BtnDashboard.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White);
-
-            BtnEditProfile.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
-            BtnEditProfile.Foreground = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF1F4F6E"));
+            BtnDashboard.Tag = "Active";
+            BtnEditProfile.Tag = null;
+            BtnLogout.Tag = null;
         }
 
         private void BtnEditProfile_Click(object sender, RoutedEventArgs e)
@@ -178,14 +173,9 @@ namespace IkanLogger2.Views
             DashboardView.Visibility = Visibility.Collapsed;
             EditProfileView.Visibility = Visibility.Visible;
 
-            // Update button styles
-            BtnEditProfile.Background = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF1F4F6E"));
-            BtnEditProfile.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White);
-
-            BtnDashboard.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
-            BtnDashboard.Foreground = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF1F4F6E"));
+            BtnEditProfile.Tag = "Active";
+            BtnDashboard.Tag = null;
+            BtnLogout.Tag = null;
         }
 
         private void MonthComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -244,6 +234,26 @@ namespace IkanLogger2.Views
             {
                 CustomMessageBox.Show($"Terjadi kesalahan: {ex.Message}", "Error",
                     CustomMessageBox.MessageBoxButton.OK);
+            }
+        }
+        private void BtnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Apakah Anda yakin ingin logout?",
+                "Konfirmasi Logout",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                // Clear session
+                Session.CurrentUser = null;
+
+                // Redirect ke Login page
+                NavigationService?.Navigate(new Uri("Views/LoginPage.xaml", UriKind.Relative));
+
+                MessageBox.Show("Anda berhasil logout.", "Logout",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

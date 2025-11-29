@@ -19,10 +19,14 @@ namespace IkanLogger2.Views
         private List<Fish> _allFishes = new List<Fish>();
         private Fish _selectedFish = null;
         private List<TempCatchItem> _catchItems = new List<TempCatchItem>();
+        private double _lat;
+        private double _lng;
 
-        public CreateLogPage()
+        public CreateLogPage(double latitude, double longitude)
         {
             InitializeComponent();
+            _lat = latitude;
+            _lng = longitude;
             Loaded += async (s, e) => await LoadFishData();
         }
 
@@ -125,16 +129,57 @@ namespace IkanLogger2.Views
             SelectedFishDisplay.Visibility = Visibility.Collapsed;
             UpdateAddButtonState();
         }
+        private void TxtWeight_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Get current cursor position
+            int cursorPosition = TxtWeight.SelectionStart;
+            string text = TxtWeight.Text;
+
+            // Remove any non-numeric characters except dot and comma
+            string cleaned = Regex.Replace(text, @"[^\d.,]", "");
+
+            // Replace comma with dot for consistent decimal separator
+            cleaned = cleaned.Replace(',', '.');
+
+            // Ensure only one decimal separator
+            int dotCount = cleaned.Count(c => c == '.');
+            if (dotCount > 1)
+            {
+                // Keep only the first dot
+                int firstDotIndex = cleaned.IndexOf('.');
+                cleaned = cleaned.Substring(0, firstDotIndex + 1) +
+                          cleaned.Substring(firstDotIndex + 1).Replace(".", "");
+            }
+
+            // Validate format (optional: prevent multiple leading zeros)
+            if (cleaned.Length > 1 && cleaned[0] == '0' && cleaned[1] != '.')
+            {
+                cleaned = cleaned.TrimStart('0');
+                if (string.IsNullOrEmpty(cleaned) || cleaned[0] == '.')
+                    cleaned = "0" + cleaned;
+            }
+
+            // Update text if it changed
+            if (text != cleaned)
+            {
+                TxtWeight.Text = cleaned;
+                TxtWeight.SelectionStart = Math.Min(cursorPosition, cleaned.Length);
+            }
+
+            UpdateAddButtonState();
+        }
 
         private void UpdateAddButtonState()
         {
-            bool isValidWeight = double.TryParse(TxtWeight.Text,
-                                        NumberStyles.Any,
-                                        CultureInfo.InvariantCulture,
-                                        out double weight);
-            BtnAddFish.IsEnabled = _selectedFish != null &&
-                                   !string.IsNullOrWhiteSpace(TxtWeight.Text) &&
-                                   weight > 0;
+            bool isValidWeight = !string.IsNullOrWhiteSpace(TxtWeight.Text) &&
+                                     double.TryParse(
+                                         TxtWeight.Text,
+                                         NumberStyles.AllowDecimalPoint,
+                                         CultureInfo.InvariantCulture,
+                                         out double weight) &&
+                                     weight > 0;
+
+            BtnAddFish.IsEnabled = _selectedFish != null && isValidWeight;
         }
 
         // Handle placeholder untuk Weight
@@ -151,12 +196,24 @@ namespace IkanLogger2.Views
 
         private void BtnAddFish_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedFish == null || !double.TryParse(TxtWeight.Text, out double weight) || weight <= 0)
+            if (_selectedFish == null )
             {
                 CustomMessageBox.Show(
                     "Pilih ikan dan masukkan berat yang valid",
                     "Input Tidak Valid",
                     CustomMessageBox.MessageBoxButton.OK);
+                return;
+            }
+
+            if (!double.TryParse(TxtWeight.Text,
+                        NumberStyles.AllowDecimalPoint,
+                        CultureInfo.InvariantCulture,
+                        out double weight) || weight <= 0)
+            {
+                MessageBox.Show("Masukkan berat yang valid (contoh: 10.5 atau 10,5)",
+                              "Input Tidak Valid",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Warning);
                 return;
             }
 
@@ -353,6 +410,8 @@ namespace IkanLogger2.Views
                 bool success = await LogService.CreateCatchLogAsync(
                     Session.CurrentUser.Id,
                     notes,
+                    _lat,
+                    _lng,
                     catches
                 );
 
