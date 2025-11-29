@@ -112,7 +112,7 @@
 
                     <!-- Content Panel Log -->
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                  MaxHeight="400"
+                                  MaxHeight="430"
                                   Padding="15">
                         <StackPanel x:Name="RecentLogsContainer">
                             <!-- Log items akan di-generate di code-behind -->
