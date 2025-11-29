@@ -16,6 +16,7 @@
     <None Remove="Public\Fonts\MAUIKEA Demo.otf" />
     <None Remove="Public\Fonts\PlusJakartaSans-Bold.ttf" />
     <None Remove="Public\Fonts\PlusJakartaSans-Medium.ttf" />
+    <None Remove="Public\Images\Artboard 16.png" />
     <None Remove="Views\Artboard 15.png" />
   </ItemGroup>
 
@@ -34,7 +35,10 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Public\Images\Artboard 151.png" />
-    <Resource Include="Views\Artboard 15.png" />
+    <Resource Include="Public\Images\Artboard 15.png" />
+    <Resource Include="Public\Images\Artboard 16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

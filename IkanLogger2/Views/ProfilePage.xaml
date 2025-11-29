@@ -5,14 +5,130 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:IkanLogger2.Views"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="1080" d:DesignWidth="1920"
       Background="#FFF5F5F5"
       Title="ProfilePage">
-
     <Grid>
-        <TextBlock Text="Profile NIGGER"
-           FontWeight="SemiBold"
-           Margin="0 4"/>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- NAVBAR -->
+        <local:Navbar Grid.Row="0"/>
+
+        <!-- BACKGROUND -->
+        <Grid Grid.Row="1">
+            <Grid.Background>
+                <ImageBrush ImageSource="/Public/Images/Artboard 16.png"/>
+            </Grid.Background>
+
+            <!-- Title Box -->
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,40,0,0"
+                    Background="White"
+                    CornerRadius="15"
+                    Padding="40,20"
+                    MinWidth="250"
+                    BorderThickness="3" BorderBrush="#FF1F4F6E">
+                    <TextBlock Text="PROFILE" 
+                        FontFamily="MAUIKEA Demo"
+                        FontSize="36" 
+                        FontWeight="Bold"
+                        Foreground="#FF1F4F6E"
+                        HorizontalAlignment="Center"/>
+                    </Border>
+                    <Border 
+                        Background="White"
+                        Padding="40"
+                        CornerRadius="20"
+                        Width="540"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                <StackPanel>
+                    <!-- TITLE -->
+                    <TextBlock Text="Edit Profile"
+                         FontFamily="MAUIKEA Demo"
+                         FontSize="40"
+                         FontWeight="ExtraBold"
+                         Foreground="#FF1F4F6E"
+                         HorizontalAlignment="Center"
+                         Margin="0 0 0 30"/>
+
+                    <!-- USERNAME -->
+                    <TextBlock Text="Username"
+                         FontFamily="Plus Jakarta Sans Medium"
+                         FontSize="20"
+                         Margin="0 0 0 8"
+                         Foreground="#FF1F4F6E"/>
+                    <TextBox x:Name="UsernameBox"
+                         FontFamily="Plus Jakarta Sans Medium"
+                         FontSize="18"
+                         Padding="12"
+                         Height="50"
+                         Margin="0 0 0 20"
+                         Foreground="#FF1F4F6E"
+                         BorderThickness="3"
+                         BorderBrush="#FF1F4F6E">
+                    </TextBox>
+
+                    <!-- PASSWORD -->
+                    <TextBlock Text="Password"
+                         FontFamily="Plus Jakarta Sans Medium"
+                         FontSize="20"
+                         Margin="0 0 0 8"
+                         Foreground="#FF1F4F6E"/>
+                    <PasswordBox x:Name="PasswordBox"
+                         FontFamily="Plus Jakarta Sans"
+                         FontSize="18"
+                         Padding="12"
+                         Height="50"
+                         Margin="0 0 0 30"
+                         Foreground="#FF1F4F6E"
+                         BorderBrush="#FF1F4F6E"
+                         BorderThickness="3">
+                    </PasswordBox>
+
+
+                    <!-- Save BUTTON -->
+                    <Button Content="Save"
+                        FontFamily="Plus Jakarta Sans"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Height="50"
+                        Margin="0 0 0 20"
+                        Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#FF1F4F6E"/>
+                                <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                        CornerRadius="8"
+                                        BorderThickness="0">
+                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                    VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF8BD8F0"/>
+                                        <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+        </Grid>
     </Grid>
 </Page>

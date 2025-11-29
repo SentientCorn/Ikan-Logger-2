@@ -427,5 +427,15 @@ namespace IkanLogger2.Views
             // Nanti bisa diganti dengan:
             // NavigationService?.Navigate(new CreateLogPage());
         }
+
+        private void Records_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new RecordsPage());
+        }
+
+        private void Profile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

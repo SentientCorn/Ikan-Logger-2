@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 
 namespace IkanLogger2.Views
 {
-     
     public partial class RecordsPage : Page
     {
         public RecordsPage()
@@ -39,9 +39,6 @@ namespace IkanLogger2.Views
                 LoadingPanel.Visibility = Visibility.Visible;
                 RecordsContainer.Children.Clear();
 
-                // Update user info
-                TxtUserInfo.Text = $"Semua catatan tangkapan untuk {Session.CurrentUser.Username}";
-
                 // Load data
                 var logs = await LogService.GetAllLogs(Session.CurrentUser.Id);
 
@@ -51,18 +48,15 @@ namespace IkanLogger2.Views
                 if (logs == null || logs.Count == 0)
                 {
                     EmptyStatePanel.Visibility = Visibility.Visible;
-                    TxtTotalRecords.Text = "0";
                     return;
                 }
 
-                // Update total records
-                TxtTotalRecords.Text = logs.Count.ToString();
                 EmptyStatePanel.Visibility = Visibility.Collapsed;
 
-                // Render cards
+                // Render cards dengan styling baru
                 foreach (var log in logs)
                 {
-                    var card = CreateDetailedLogCard(log);
+                    var card = CreateStyledLogCard(log);
                     RecordsContainer.Children.Add(card);
                 }
             }
@@ -76,6 +70,103 @@ namespace IkanLogger2.Views
             }
         }
 
+        // Card dengan styling sesuai gambar
+        private Border CreateStyledLogCard(CatchLogDetail log)
+        {
+            // Main Card Border
+            var card = new Border
+            {
+                Width = 280,
+                Margin = new Thickness(15, 15, 15, 15), // Fixed Thickness
+                Background = Brushes.White,
+                CornerRadius = new CornerRadius(12),
+                Effect = new DropShadowEffect
+                {
+                    Color = Colors.Black,
+                    BlurRadius = 15,
+                    ShadowDepth = 0,
+                    Opacity = 0.2
+                }
+            };
+
+            var stackPanel = new StackPanel();
+
+            // Header (Date) - warna biru
+            var header = new Border
+            {
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2A5F7E")),
+                CornerRadius = new CornerRadius(12, 12, 0, 0),
+                Padding = new Thickness(15, 12, 15, 12) // Fixed Thickness
+            };
+
+            var dateText = new TextBlock
+            {
+                Text = log.logdate.ToString("dddd, dd MMMM yyyy"),
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
+                FontSize = 14,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = Brushes.White
+            };
+
+            header.Child = dateText;
+            stackPanel.Children.Add(header);
+
+            // Content - Gunakan Border untuk padding
+            var contentBorder = new Border
+            {
+                Padding = new Thickness(15, 15, 15, 15) // Fixed Thickness
+            };
+
+            var contentPanel = new StackPanel();
+
+            // Location/Notes
+            var locationText = new TextBlock
+            {
+                Text = !string.IsNullOrWhiteSpace(log.notes) ? log.notes : "Catatan Tangkapan",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
+                FontSize = 15,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                Margin = new Thickness(0, 0, 0, 8),
+                TextWrapping = TextWrapping.Wrap
+            };
+            contentPanel.Children.Add(locationText);
+
+            // Fish Catched Label
+            var fishLabel = new TextBlock
+            {
+                Text = "Fish Catched:",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
+                FontSize = 13,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+            contentPanel.Children.Add(fishLabel);
+
+            // Fish List
+            if (log.Catches != null && log.Catches.Count > 0)
+            {
+                foreach (var fish in log.Catches)
+                {
+                    var fishItem = new TextBlock
+                    {
+                        Text = $"• {fish.fishname} : {fish.weight:N2} Kg",
+                        FontFamily = new FontFamily("Plus Jakarta Sans"),
+                        FontSize = 12,
+                        Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                        Margin = new Thickness(0, 0, 0, 3)
+                    };
+                    contentPanel.Children.Add(fishItem);
+                }
+            }
+
+            contentBorder.Child = contentPanel;
+            stackPanel.Children.Add(contentBorder);
+            card.Child = stackPanel;
+
+            return card;
+        }
+
         private Border CreateDetailedLogCard(CatchLogDetail log)
         {
             var card = new Border
@@ -85,11 +176,11 @@ namespace IkanLogger2.Views
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8),
                 Margin = new Thickness(0, 0, 0, 20),
-                Padding = new Thickness(20)
+                Padding = new Thickness(20, 20, 20, 20) // Fixed Thickness
             };
 
             // Add shadow effect
-            card.Effect = new System.Windows.Media.Effects.DropShadowEffect
+            card.Effect = new DropShadowEffect
             {
                 Color = Colors.Black,
                 BlurRadius = 10,
@@ -108,9 +199,10 @@ namespace IkanLogger2.Views
             var dateText = new TextBlock
             {
                 Text = log.logdate.ToString("dddd, dd MMMM yyyy"),
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontWeight = FontWeights.Bold,
                 FontSize = 16,
-                Foreground = new SolidColorBrush(Color.FromRgb(0, 120, 215))
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E"))
             };
             Grid.SetColumn(dateText, 0);
             headerGrid.Children.Add(dateText);
@@ -119,6 +211,7 @@ namespace IkanLogger2.Views
             var timeText = new TextBlock
             {
                 Text = log.logdate.ToString("HH:mm"),
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 14,
                 Foreground = Brushes.Gray,
                 HorizontalAlignment = HorizontalAlignment.Right
@@ -134,6 +227,7 @@ namespace IkanLogger2.Views
                 var notesText = new TextBlock
                 {
                     Text = log.notes,
+                    FontFamily = new FontFamily("Plus Jakarta Sans"),
                     TextWrapping = TextWrapping.Wrap,
                     Foreground = Brushes.DarkGray,
                     FontSize = 13,
@@ -165,12 +259,14 @@ namespace IkanLogger2.Views
             var weightLabel = new TextBlock
             {
                 Text = "Total Berat",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 12,
                 Foreground = Brushes.Gray
             };
             var weightValue = new TextBlock
             {
                 Text = $"{log.totalweight:N2} kg",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 18,
                 FontWeight = FontWeights.Bold,
                 Foreground = Brushes.Black
@@ -188,6 +284,7 @@ namespace IkanLogger2.Views
             var priceLabel = new TextBlock
             {
                 Text = "Total Pendapatan",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 12,
                 Foreground = Brushes.Gray,
                 TextAlignment = TextAlignment.Right
@@ -195,6 +292,7 @@ namespace IkanLogger2.Views
             var priceValue = new TextBlock
             {
                 Text = $"Rp {log.totalprice:N0}",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 18,
                 FontWeight = FontWeights.Bold,
                 Foreground = new SolidColorBrush(Color.FromRgb(34, 139, 34)),
@@ -214,9 +312,10 @@ namespace IkanLogger2.Views
                 var fishHeader = new TextBlock
                 {
                     Text = $"Detail Tangkapan ({log.Catches.Count} jenis ikan)",
+                    FontFamily = new FontFamily("Plus Jakarta Sans"),
                     FontWeight = FontWeights.SemiBold,
                     FontSize = 14,
-                    Foreground = new SolidColorBrush(Color.FromRgb(0, 120, 215)),
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                     Margin = new Thickness(0, 0, 0, 10)
                 };
                 mainStack.Children.Add(fishHeader);
@@ -228,7 +327,7 @@ namespace IkanLogger2.Views
                     BorderBrush = new SolidColorBrush(Color.FromRgb(230, 230, 230)),
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(5),
-                    Padding = new Thickness(12)
+                    Padding = new Thickness(12, 12, 12, 12) // Fixed Thickness
                 };
 
                 var fishListStack = new StackPanel();
@@ -270,6 +369,7 @@ namespace IkanLogger2.Views
             var nameText = new TextBlock
             {
                 Text = fish.fishname,
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontWeight = FontWeights.SemiBold,
                 FontSize = 13,
                 VerticalAlignment = VerticalAlignment.Center
@@ -281,6 +381,7 @@ namespace IkanLogger2.Views
             var weightText = new TextBlock
             {
                 Text = $"{fish.weight:N2} kg",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 13,
                 Foreground = Brushes.Gray,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -293,6 +394,7 @@ namespace IkanLogger2.Views
             var priceText = new TextBlock
             {
                 Text = $"Rp {fish.saleprice:N0}",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 13,
                 FontWeight = FontWeights.SemiBold,
                 Foreground = new SolidColorBrush(Color.FromRgb(34, 139, 34)),
@@ -307,11 +409,7 @@ namespace IkanLogger2.Views
 
         private void BtnCreateNew_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Navigate to create log page
-            MessageBox.Show("Fitur buat catatan baru akan segera hadir!",
-                          "Info",
-                          MessageBoxButton.OK,
-                          MessageBoxImage.Information);
+
         }
     }
 }

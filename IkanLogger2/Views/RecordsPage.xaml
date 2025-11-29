@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:IkanLogger2.Views"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="900"
+      d:DesignHeight="1080" d:DesignWidth="1920"
       Background="#FFF5F5F5"
       Title="Records">
     <Grid>
@@ -14,122 +14,112 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Border Grid.Row="0" 
-                Background="White" 
-                BorderBrush="#DDDDDD" 
-                BorderThickness="0,0,0,1"
-                Padding="30,20">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="2" Opacity="0.1"/>
-            </Border.Effect>
-            <Grid>
-                <StackPanel>
-                    <TextBlock Text="Riwayat Tangkapan" 
-                               FontSize="28" 
-                               FontWeight="Bold"
-                               Foreground="#0078D7"/>
-                    <TextBlock x:Name="TxtUserInfo"
-                               Text="Semua catatan tangkapan Anda"
-                               FontSize="14"
-                               Foreground="Gray"
-                               Margin="0,5,0,0"/>
-                </StackPanel>
+        <!-- NAVBAR -->
+        <local:Navbar Grid.Row="0"/>
 
-                <!-- Filter/Search Section (Optional untuk future) -->
-                <StackPanel Orientation="Horizontal" 
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center">
-                    <TextBlock Text="Total Catatan: " 
-                              FontSize="14" 
-                              Foreground="Gray"
-                              VerticalAlignment="Center"/>
-                    <TextBlock x:Name="TxtTotalRecords" 
-                              Text="0" 
-                              FontSize="14" 
-                              FontWeight="Bold"
-                              Foreground="#0078D7"
-                              VerticalAlignment="Center"/>
+        <!-- BACKGROUND -->
+        <Grid Grid.Row="1">
+            <Grid.Background>
+                <ImageBrush ImageSource="/Public/Images/Artboard 16.png"/>
+            </Grid.Background>
+
+            <!-- Title Box -->
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,40,0,0"
+                    Background="White"
+                    CornerRadius="15"
+                    Padding="40,20"
+                    MinWidth="250"
+                    BorderThickness="3" BorderBrush="#FF1F4F6E">
+                <TextBlock Text="RECORDS" 
+                           FontFamily="MAUIKEA Demo"
+                           FontSize="36" 
+                           FontWeight="Bold"
+                           Foreground="#FF1F4F6E"
+                           HorizontalAlignment="Center"/>
+            </Border>
+
+            <!-- Content Area -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Margin="0,140,0,0"
+                          Padding="40,20">
+                <StackPanel x:Name="RecordsContainer">
+                    <!-- Log cards akan di-generate di code-behind -->
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Loading Indicator -->
+            <Grid x:Name="LoadingPanel" 
+                  Background="#80FFFFFF"
+                  Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" 
+                           HorizontalAlignment="Center">
+                    <TextBlock Text="⏳" FontSize="48" 
+                              HorizontalAlignment="Center"
+                              Margin="0,0,0,10"/>
+                    <TextBlock Text="Memuat data..." 
+                              FontFamily="Plus Jakarta Sans"
+                              FontSize="16" 
+                              FontWeight="SemiBold"
+                              Foreground="#FF1F4F6E"/>
                 </StackPanel>
             </Grid>
-        </Border>
 
-        <!-- Content Area -->
-        <ScrollViewer Grid.Row="1" 
-                      VerticalScrollBarVisibility="Auto"
-                      Padding="30,20">
-            <StackPanel x:Name="RecordsContainer">
-                <!-- Log cards akan di-generate di code-behind -->
-            </StackPanel>
-        </ScrollViewer>
-
-        <!-- Loading Indicator -->
-        <Grid x:Name="LoadingPanel" 
-              Grid.Row="1"
-              Background="#80FFFFFF"
-              Visibility="Collapsed">
-            <StackPanel VerticalAlignment="Center" 
-                       HorizontalAlignment="Center">
-                <TextBlock Text="⏳" FontSize="48" 
-                          HorizontalAlignment="Center"
-                          Margin="0,0,0,10"/>
-                <TextBlock Text="Memuat data..." 
-                          FontSize="16" 
-                          Foreground="Gray"/>
-            </StackPanel>
-        </Grid>
-
-        <!-- Empty State -->
-        <Grid x:Name="EmptyStatePanel" 
-              Grid.Row="1"
-              Visibility="Collapsed">
-            <StackPanel VerticalAlignment="Center" 
-                       HorizontalAlignment="Center">
-                <TextBlock Text="📋" FontSize="64" 
-                          HorizontalAlignment="Center"
-                          Margin="0,0,0,15"/>
-                <TextBlock Text="Belum ada catatan tangkapan" 
-                          FontSize="18" 
-                          FontWeight="SemiBold"
-                          Foreground="Gray"
-                          HorizontalAlignment="Center"/>
-                <TextBlock Text="Mulai buat catatan pertama Anda" 
-                          FontSize="14" 
-                          Foreground="LightGray"
-                          HorizontalAlignment="Center"
-                          Margin="0,5,0,20"/>
-                <Button Content="Buat Catatan Baru"
-                       Padding="20,10"
-                       Background="#0078D7"
-                       Foreground="White"
-                       BorderThickness="0"
-                       FontSize="14"
-                       FontWeight="SemiBold"
-                       Cursor="Hand"
-                       Click="BtnCreateNew_Click">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                               CornerRadius="5"
-                                               Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter HorizontalAlignment="Center" 
-                                                            VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#005A9E"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-            </StackPanel>
+            <!-- Empty State -->
+            <Grid x:Name="EmptyStatePanel" 
+                  Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" 
+                           HorizontalAlignment="Center">
+                    <TextBlock Text="📋" FontSize="64" 
+                              HorizontalAlignment="Center"
+                              Margin="0,0,0,15"/>
+                    <TextBlock Text="Belum ada catatan tangkapan" 
+                              FontFamily="Plus Jakarta Sans"
+                              FontSize="18" 
+                              FontWeight="SemiBold"
+                              Foreground="#FF1F4F6E"
+                              HorizontalAlignment="Center"/>
+                    <TextBlock Text="Mulai buat catatan pertama Anda" 
+                              FontFamily="Plus Jakarta Sans"
+                              FontSize="14" 
+                              Foreground="#FF2A5F7E"
+                              HorizontalAlignment="Center"
+                              Margin="0,5,0,20"/>
+                    <Button Content="Buat Catatan Baru"
+                           Padding="20,10"
+                           FontFamily="Plus Jakarta Sans"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Cursor="Hand"
+                           Click="BtnCreateNew_Click">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#FF1F4F6E"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                   CornerRadius="8"
+                                                   Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                                VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF8BD8F0"/>
+                                        <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

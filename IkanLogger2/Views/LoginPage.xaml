@@ -10,7 +10,7 @@
       Title="LoginPage">
     <Grid Margin="0">
         <Grid.Background>
-            <ImageBrush ImageSource="/Views/Artboard 15.png"/>
+            <ImageBrush ImageSource="/Public/Images/Artboard 15.png"/>
         </Grid.Background>
         <Border 
             Background="White"
