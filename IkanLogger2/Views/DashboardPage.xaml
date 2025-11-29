@@ -3,63 +3,150 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
+      xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
       xmlns:local="clr-namespace:IkanLogger2.Views"
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920"
       Background="#FFF5F5F5"
       Title="DashboardPage">
-
     <Grid>
-        <!-- MAP BACKGROUND -->
-        <gmap:GMapControl x:Name="MapControl"
-                          Zoom="10" />
-        <Border HorizontalAlignment="Left" VerticalAlignment="Top" 
-            Margin="10" Background="White" CornerRadius="5" Padding="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="220"/>
+        </Grid.ColumnDefinitions>
 
+        <!-- MAP AREA (Kiri) -->
+        <Grid Grid.Column="0">
+            <!-- MAP BACKGROUND -->
+            <gmap:GMapControl x:Name="MapControl" Zoom="10" />
+
+            <!-- Filter Box -->
+            <Border HorizontalAlignment="Left" VerticalAlignment="Top" 
+                    Margin="10" Background="White" CornerRadius="5" Padding="10">
+                <Border.Effect>
+                    <DropShadowEffect Color="Gray" BlurRadius="10" ShadowDepth="3" Opacity="0.5"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Filter Jenis Ikan:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="FishFilterComboBox" 
+                              Width="200" 
+                              SelectionChanged="FishFilterComboBox_SelectionChanged"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Fish Info Panel -->
+            <Border x:Name="FishInfoPanel" 
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                    Margin="20" Padding="15" Width="250"
+                    Background="White" CornerRadius="8" Visibility="Collapsed">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="15" ShadowDepth="0" Opacity="0.3"/>
+                </Border.Effect>
+                <StackPanel>
+                    <Grid Margin="0,0,0,10">
+                        <TextBlock Text="Detail Lokasi" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                        <Button Content="✕" Click="CloseInfoPanel_Click" 
+                                HorizontalAlignment="Right" Width="25" Height="25" 
+                                Background="Transparent" BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
+                    </Grid>
+                    <Separator Margin="0,0,0,10"/>
+                    <TextBlock x:Name="TxtLocationName" Text="Lokasi #ID" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBlock Text="Daftar Ikan &amp; Harga:" Foreground="Gray" FontSize="12" Margin="0,0,0,5"/>
+                    <TextBlock x:Name="TxtFishList" TextWrapping="Wrap" Text="- Ikan A (Rp 10.000)" FontSize="13"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- RECENT LOGS PANEL (Kanan) -->
+        <!-- RECENT LOGS PANEL (Kanan) -->
+        <Border Grid.Column="1" 
+        Background="White" 
+        BorderBrush="#DDDDDD" 
+        BorderThickness="1,0,0,0">
             <Border.Effect>
-                <DropShadowEffect Color="Gray" BlurRadius="10" ShadowDepth="3" Opacity="0.5"/>
+                <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="0" Opacity="0.15" Direction="180"/>
             </Border.Effect>
 
-            <StackPanel>
-                <TextBlock Text="Filter Jenis Ikan:" FontWeight="Bold" Margin="0,0,0,5"/>
-                <ComboBox x:Name="FishFilterComboBox" 
-                      Width="200" 
-                      SelectionChanged="FishFilterComboBox_SelectionChanged"/>
-            </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header Panel Log -->
+                <Border Grid.Row="0" 
+                Background="#0078D7" 
+                Padding="20,15">
+                    <StackPanel>
+                        <TextBlock Text="Log Tangkapan" 
+                           Foreground="White" 
+                           FontWeight="Bold" 
+                           FontSize="18"/>
+                        <TextBlock Text="3 Terakhir" 
+                           Foreground="#E0F0FF" 
+                           FontSize="12"
+                           Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Content Panel Log (ScrollViewer tetap di Row 1 dengan Height="*") -->
+                <ScrollViewer Grid.Row="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="15"
+                      Margin="0,0,0,0">
+                    <StackPanel x:Name="RecentLogsContainer">
+                        <!-- Log items akan di-generate di code-behind -->
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Tombol Buat Catatan Baru (Row 2 dengan Height="Auto") -->
+                <Border Grid.Row="2" 
+                Background="#F9F9F9" 
+                BorderBrush="#DDDDDD" 
+                BorderThickness="0,1,0,0"
+                Padding="15">
+                    <Button x:Name="BtnCreateNewLog"
+                    Click="BtnCreateNewLog_Click"
+                    Height="40"
+                    Background="#0078D7"
+                    Foreground="White"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"
+                    FontSize="14"
+                    Cursor="Hand" HorizontalAlignment="Center">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#0078D7"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="5"
+                                            BorderThickness="0">
+                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                        VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#005A9E"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#004578"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="➕" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Buat Catatan Baru" VerticalAlignment="Center" FontSize="12" Margin="0,0,10,0"/>
+                        </StackPanel>
+                    </Button>
+                </Border>
+            </Grid>
         </Border>
-        <Border x:Name="FishInfoPanel" 
-            HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-            Margin="20" Padding="15" Width="250"
-            Background="White" CornerRadius="8" Visibility="Collapsed">
-
-            <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="15" ShadowDepth="0" Opacity="0.3"/>
-            </Border.Effect>
-
-            <StackPanel>
-                <Grid Margin="0,0,0,10">
-                    <TextBlock Text="Detail Lokasi" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
-                    <Button Content="✕" Click="CloseInfoPanel_Click" 
-                        HorizontalAlignment="Right" Width="25" Height="25" 
-                        Background="Transparent" BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
-                </Grid>
-
-                <Separator Margin="0,0,0,10"/>
-
-                <TextBlock x:Name="TxtLocationName" Text="Lokasi #ID" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                <TextBlock Text="Daftar Ikan &amp; Harga:" Foreground="Gray" FontSize="12" Margin="0,0,0,5"/>
-
-                <TextBlock x:Name="TxtFishList" TextWrapping="Wrap" Text="- Ikan A (Rp 10.000)" FontSize="13"/>
-            </StackPanel>
-        </Border>
-        <!-- Example overlay -->
-        <!--<Border Background="#80000000" Padding="10">
-            <StackPanel VerticalAlignment="Top">
-                <TextBlock Text="Dashboard"
-                   FontSize="26"
-                   Foreground="White"/>
-            </StackPanel>
-        </Border> -->
     </Grid>
 </Page>
