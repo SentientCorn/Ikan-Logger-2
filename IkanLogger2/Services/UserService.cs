@@ -79,5 +79,20 @@ namespace IkanLogger2.Services
 
             return null;
         }
+
+        public static async Task<bool> UpdateUserAsync(int userId, string newUsername, string newPassword)
+        {
+            using var conn = await DatabaseService.GetOpenConnectionAsync();
+
+            const string sql = @"SELECT * FROM update_user_profile(:_id, :_username, :_password)";
+            using var cmd = new NpgsqlCommand(sql, conn);
+
+            cmd.Parameters.AddWithValue("_id", userId);
+            cmd.Parameters.AddWithValue("_username", newUsername);
+            cmd.Parameters.AddWithValue("_password", string.IsNullOrEmpty(newPassword) ? DBNull.Value : (object)newPassword);
+
+            var result = await cmd.ExecuteScalarAsync();
+            return Convert.ToInt32(result) == 1;
+        }
     }
 }

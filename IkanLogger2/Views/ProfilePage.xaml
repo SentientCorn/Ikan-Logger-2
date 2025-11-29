@@ -17,102 +17,72 @@
         <!-- NAVBAR -->
         <local:Navbar Grid.Row="0"/>
 
-        <!-- BACKGROUND -->
+        <!-- MAIN CONTENT -->
         <Grid Grid.Row="1">
             <Grid.Background>
                 <ImageBrush ImageSource="/Public/Images/Artboard 16.png"/>
             </Grid.Background>
 
-            <!-- Title Box -->
-            <Border HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    Margin="0,40,0,0"
-                    Background="White"
-                    CornerRadius="15"
-                    Padding="40,20"
-                    MinWidth="250"
-                    BorderThickness="3" BorderBrush="#FF1F4F6E">
-                    <TextBlock Text="PROFILE" 
-                        FontFamily="MAUIKEA Demo"
-                        FontSize="36" 
-                        FontWeight="Bold"
-                        Foreground="#FF1F4F6E"
-                        HorizontalAlignment="Center"/>
-                    </Border>
-                    <Border 
-                        Background="White"
-                        Padding="40"
-                        CornerRadius="20"
-                        Width="540"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
+            <!-- SIDEBAR -->
+            <Border Grid.Column="0" 
+                    Background="White" 
+                    BorderBrush="#FF1F4F6E" 
+                    BorderThickness="0,0,3,0"
+                    Padding="20">
                 <StackPanel>
-                    <!-- TITLE -->
-                    <TextBlock Text="Edit Profile"
-                         FontFamily="MAUIKEA Demo"
-                         FontSize="40"
-                         FontWeight="ExtraBold"
-                         Foreground="#FF1F4F6E"
-                         HorizontalAlignment="Center"
-                         Margin="0 0 0 30"/>
+                    <!-- User Info Section -->
+                    <Border Background="#FF1F4F6E" 
+                            CornerRadius="10" 
+                            Padding="20" 
+                            Margin="0,20,0,30">
+                        <StackPanel>
+                            <!-- User Avatar -->
+                            <Ellipse Width="80" 
+                                     Height="80" 
+                                     Fill="#FF8BD8F0" 
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,0,15"/>
 
-                    <!-- USERNAME -->
-                    <TextBlock Text="Username"
-                         FontFamily="Plus Jakarta Sans Medium"
-                         FontSize="20"
-                         Margin="0 0 0 8"
-                         Foreground="#FF1F4F6E"/>
-                    <TextBox x:Name="UsernameBox"
-                         FontFamily="Plus Jakarta Sans Medium"
-                         FontSize="18"
-                         Padding="12"
-                         Height="50"
-                         Margin="0 0 0 20"
-                         Foreground="#FF1F4F6E"
-                         BorderThickness="3"
-                         BorderBrush="#FF1F4F6E">
-                    </TextBox>
+                            <TextBlock x:Name="SidebarUsername"
+                                       Text="Username"
+                                       FontFamily="Plus Jakarta Sans"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
 
-                    <!-- PASSWORD -->
-                    <TextBlock Text="Password"
-                         FontFamily="Plus Jakarta Sans Medium"
-                         FontSize="20"
-                         Margin="0 0 0 8"
-                         Foreground="#FF1F4F6E"/>
-                    <PasswordBox x:Name="PasswordBox"
-                         FontFamily="Plus Jakarta Sans"
-                         FontSize="18"
-                         Padding="12"
-                         Height="50"
-                         Margin="0 0 0 30"
-                         Foreground="#FF1F4F6E"
-                         BorderBrush="#FF1F4F6E"
-                         BorderThickness="3">
-                    </PasswordBox>
-
-
-                    <!-- Save BUTTON -->
-                    <Button Content="Save"
-                        FontFamily="Plus Jakarta Sans"
-                        FontSize="20"
-                        FontWeight="Bold"
-                        BorderThickness="0"
-                        Height="50"
-                        Margin="0 0 0 20"
-                        Cursor="Hand">
+                    <!-- Menu Items -->
+                    <Button x:Name="BtnDashboard"
+                            Content="      📊   Dashboard"
+                            Click="BtnDashboard_Click"
+                            FontFamily="Plus Jakarta Sans"
+                            FontSize="16"
+                            Height="50"
+                            Margin="0,0,0,10"
+                            HorizontalContentAlignment="Left"
+                            Padding="20,0"
+                            Cursor="Hand">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Background" Value="#FF1F4F6E"/>
-                                <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderThickness" Value="0"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="{TemplateBinding Background}"
-                                        CornerRadius="8"
-                                        BorderThickness="0">
-                                                <ContentPresenter HorizontalAlignment="Center" 
-                                                    VerticalAlignment="Center"/>
+                                                    CornerRadius="8">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                                  VerticalAlignment="Center"/>
                                             </Border>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -121,6 +91,43 @@
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="Background" Value="#FF8BD8F0"/>
                                         <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button x:Name="BtnEditProfile"
+                            Content="      ✏️   Edit Profile"
+                            Click="BtnEditProfile_Click"
+                            FontFamily="Plus Jakarta Sans"
+                            FontSize="16"
+                            Height="50"
+                            HorizontalContentAlignment="Left"
+                            Padding="20,0"
+                            Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    CornerRadius="8">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                                  VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF8BD8F0"/>
+                                        <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -129,6 +136,433 @@
                 </StackPanel>
             </Border>
 
+            <!-- CONTENT AREA -->
+            <Grid Grid.Column="1">
+                <!-- Dashboard View -->
+                <ScrollViewer x:Name="DashboardView" 
+                              VerticalScrollBarVisibility="Auto"
+                              Visibility="Visible">
+                    <StackPanel Margin="40,40,40,40">
+                        <!-- Title -->
+                        <Border HorizontalAlignment="Center"
+                                Background="White"
+                                CornerRadius="15"
+                                Padding="30,15"
+                                BorderThickness="3" 
+                                BorderBrush="#FF1F4F6E"
+                                Margin="0,0,0,30">
+                            <TextBlock Text="MONTHLY REPORT" 
+                                       FontFamily="MAUIKEA Demo"
+                                       FontSize="36" 
+                                       FontWeight="Bold"
+                                       Foreground="#FF1F4F6E"/>
+                        </Border>
+
+                        <!-- Statistics Cards Row 1 -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Total Tangkapan -->
+                            <Border Grid.Column="0" 
+                                    Background="White" 
+                                    CornerRadius="15" 
+                                    Padding="25"
+                                    BorderThickness="3"
+                                    BorderBrush="#FF1F4F6E">
+                                <StackPanel>
+                                    <TextBlock Text="🎣" 
+                                               FontSize="40"
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock Text="Total Tangkapan" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="16" 
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock x:Name="TxtTotalCatch"
+                                               Text="0 Tangkapan" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="28" 
+                                               FontWeight="Bold"
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total Berat -->
+                            <Border Grid.Column="2" 
+                                    Background="White" 
+                                    CornerRadius="15" 
+                                    Padding="25"
+                                    BorderThickness="3"
+                                    BorderBrush="#FF1F4F6E">
+                                <StackPanel>
+                                    <TextBlock Text="⚖️"
+                                               Foreground="#FF1F4F6E"
+                                               FontSize="40" 
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock Text="Total Berat" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="16" 
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock x:Name="TxtTotalWeight"
+                                               Text="0 Kg" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="28" 
+                                               FontWeight="Bold"
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total Pendapatan -->
+                            <Border Grid.Column="4" 
+                                    Background="White" 
+                                    CornerRadius="15" 
+                                    Padding="25"
+                                    BorderThickness="3"
+                                    BorderBrush="#FF1F4F6E">
+                                <StackPanel>
+                                    <TextBlock Text="💰"
+                                               Foreground="#FF1F4F6E"
+                                               FontSize="40" 
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock Text="Total Pendapatan" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="16" 
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock x:Name="TxtTotalRevenue"
+                                               Text="Rp 0" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="28" 
+                                               FontWeight="Bold"
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Statistics Cards Row 2 -->
+                        <Grid Margin="0,0,0,30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Rata-rata Berat per Tangkapan -->
+                            <Border Grid.Column="0" 
+                                    Background="White" 
+                                    CornerRadius="15" 
+                                    Padding="25"
+                                    BorderThickness="3"
+                                    BorderBrush="#FF1F4F6E">
+                                <StackPanel>
+                                    <TextBlock Text="📈"
+                                               Foreground="#FF1F4F6E"
+                                               FontSize="40" 
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock Text="Rata-rata Berat/Tangkapan" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="16" 
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock x:Name="TxtAvgWeight"
+                                               Text="0 Kg" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="28" 
+                                               FontWeight="Bold"
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Rata-rata Pendapatan per Tangkapan -->
+                            <Border Grid.Column="2" 
+                                    Background="White" 
+                                    CornerRadius="15" 
+                                    Padding="25"
+                                    BorderThickness="3"
+                                    BorderBrush="#FF1F4F6E">
+                                <StackPanel>
+                                    <TextBlock Text="💵"
+                                               Foreground="#FF1F4F6E"
+                                               FontSize="40" 
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock Text="Rata-rata Pendapatan/Tangkapan" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="16" 
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,10"/>
+                                    <TextBlock x:Name="TxtAvgRevenue"
+                                               Text="Rp 0" 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="28" 
+                                               FontWeight="Bold"
+                                               Foreground="#FF1F4F6E"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Monthly Statistics -->
+                        <Border Background="White" 
+                                CornerRadius="15" 
+                                Padding="30"
+                                BorderThickness="3"
+                                BorderBrush="#FF1F4F6E"
+                                Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Text="Statistik Per Bulan" 
+                                           FontFamily="Plus Jakarta Sans"
+                                           FontSize="24" 
+                                           FontWeight="Bold"
+                                           Foreground="#FF1F4F6E"
+                                           Margin="0,0,0,20"/>
+
+                                <!-- Month Selection -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                    <TextBlock Text="Pilih Bulan: " 
+                                               FontFamily="Plus Jakarta Sans"
+                                               FontSize="16" 
+                                               Foreground="#FF1F4F6E"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,10,0"/>
+                                    <ComboBox x:Name="MonthComboBox"
+                                              SelectionChanged="MonthComboBox_SelectionChanged"
+                                              FontFamily="Plus Jakarta Sans"
+                                              FontSize="14"
+                                              Width="200"
+                                              Height="35"
+                                              BorderBrush="#FF1F4F6E"
+                                              BorderThickness="2"/>
+                                </StackPanel>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Total Tangkapan" 
+                                                   FontFamily="Plus Jakarta Sans"
+                                                   FontSize="14" 
+                                                   Foreground="#FF1F4F6E"/>
+                                        <TextBlock x:Name="TxtMonthCatch"
+                                                   Text="0 Tangkapan" 
+                                                   FontFamily="Plus Jakarta Sans"
+                                                   FontSize="20" 
+                                                   FontWeight="Bold"
+                                                   Foreground="#FF1F4F6E"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Total Berat" 
+                                                   FontFamily="Plus Jakarta Sans"
+                                                   FontSize="14" 
+                                                   Foreground="#FF1F4F6E"/>
+                                        <TextBlock x:Name="TxtMonthWeight"
+                                                   Text="0 Kg" 
+                                                   FontFamily="Plus Jakarta Sans"
+                                                   FontSize="20" 
+                                                   FontWeight="Bold"
+                                                   Foreground="#FF1F4F6E"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="4">
+                                        <TextBlock Text="Total Pendapatan" 
+                                                   FontFamily="Plus Jakarta Sans"
+                                                   FontSize="14" 
+                                                   Foreground="#FF1F4F6E"/>
+                                        <TextBlock x:Name="TxtMonthRevenue"
+                                                   Text="Rp 0" 
+                                                   FontFamily="Plus Jakarta Sans"
+                                                   FontSize="20" 
+                                                   FontWeight="Bold"
+                                                   Foreground="#FF1F4F6E"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Top Fish Species -->
+                        <Border Background="White" 
+                                CornerRadius="15" 
+                                Padding="30"
+                                BorderThickness="3"
+                                BorderBrush="#FF1F4F6E">
+                            <StackPanel>
+                                <TextBlock Text="Ikan Paling Sering Ditangkap" 
+                                           FontFamily="Plus Jakarta Sans"
+                                           FontSize="24" 
+                                           FontWeight="Bold"
+                                           Foreground="#FF1F4F6E"
+                                           Margin="0,0,0,20"/>
+
+                                <ListView x:Name="TopFishListView"
+                                          BorderThickness="0"
+                                          Background="Transparent"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#FFF5F5F5" 
+                                                    CornerRadius="8" 
+                                                    Padding="15" 
+                                                    Margin="0,0,0,10">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Text="{Binding FishName}" 
+                                                               FontFamily="Plus Jakarta Sans"
+                                                               FontSize="16"
+                                                               Padding="5,0"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#FF1F4F6E"
+                                                               VerticalAlignment="Center"/>
+
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Count, StringFormat='{}({0}x)'}" 
+                                                               FontFamily="Plus Jakarta Sans"
+                                                               FontSize="14" 
+                                                               Foreground="#FF1F4F6E"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,20,0"/>
+
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding TotalWeight, StringFormat='{}{0:N2} Kg'}" 
+                                                               FontFamily="Plus Jakarta Sans"
+                                                               FontSize="14" 
+                                                               FontWeight="Bold"
+                                                               Foreground="#FF1F4F6E"
+                                                               VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Edit Profile View -->
+                <Grid x:Name="EditProfileView" Visibility="Collapsed">
+                    <Border Background="White"
+                            Padding="40"
+                            CornerRadius="20"
+                            Width="540"
+                            BorderThickness="3"
+                            BorderBrush="#FF1F4F6E"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                        <StackPanel>
+                            <!-- TITLE -->
+                            <TextBlock Text="Edit Profile"
+                                       FontFamily="MAUIKEA Demo"
+                                       FontSize="40"
+                                       FontWeight="ExtraBold"
+                                       Foreground="#FF1F4F6E"
+                                       HorizontalAlignment="Center"
+                                       Margin="0 0 0 30"/>
+
+                            <!-- USERNAME -->
+                            <TextBlock Text="Username"
+                                       FontFamily="Plus Jakarta Sans Medium"
+                                       FontSize="20"
+                                       Margin="0 0 0 8"
+                                       Foreground="#FF1F4F6E"/>
+                            <TextBox x:Name="UsernameBox"
+                                     FontFamily="Plus Jakarta Sans Medium"
+                                     FontSize="18"
+                                     Padding="12"
+                                     Height="50"
+                                     Margin="0 0 0 20"
+                                     Foreground="#FF1F4F6E"
+                                     BorderThickness="3"
+                                     BorderBrush="#FF1F4F6E"/>
+
+                            <!-- PASSWORD -->
+                            <TextBlock Text="Password"
+                                       FontFamily="Plus Jakarta Sans Medium"
+                                       FontSize="20"
+                                       Margin="0 0 0 8"
+                                       Foreground="#FF1F4F6E"/>
+                            <PasswordBox x:Name="PasswordBox"
+                                         FontFamily="Plus Jakarta Sans"
+                                         FontSize="18"
+                                         Padding="12"
+                                         Height="50"
+                                         Margin="0 0 0 30"
+                                         Foreground="#FF1F4F6E"
+                                         BorderBrush="#FF1F4F6E"
+                                         BorderThickness="3"/>
+
+                            <!-- Save BUTTON -->
+                            <Button Content="Save"
+                                    x:Name="SaveButton"
+                                    Click="SaveButton_Click"
+                                    FontFamily="Plus Jakarta Sans"
+                                    FontSize="20"
+                                    FontWeight="Bold"
+                                    BorderThickness="0"
+                                    Height="50"
+                                    Margin="0 0 0 20"
+                                    Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="#FF1F4F6E"/>
+                                        <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            CornerRadius="8"
+                                                            BorderThickness="0">
+                                                        <ContentPresenter HorizontalAlignment="Center" 
+                                                                          VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#FF8BD8F0"/>
+                                                <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

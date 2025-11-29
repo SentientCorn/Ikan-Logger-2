@@ -29,13 +29,13 @@ namespace IkanLogger2.Views
 
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 {
-                    MessageBox.Show("Username and password cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show("Username and password cannot be empty.", "Error", CustomMessageBox.MessageBoxButton.OK);
                     return;
                 }
 
                 if (password != confirmPassword)
                 {
-                    MessageBox.Show("Passwords do not match.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show("Passwords do not match.", "Error", CustomMessageBox.MessageBoxButton.OK);
                     return;
                 }
 
@@ -43,16 +43,16 @@ namespace IkanLogger2.Views
 
                     if (success)
                     {
-                        MessageBox.Show("Registration successful! You can now log in.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    CustomMessageBox.Show("Registration successful! You can now log in.", "Success", CustomMessageBox.MessageBoxButton.OK);
                     }
                     else
                     {
-                        MessageBox.Show("Registration failed. Username may already be taken.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show("Registration failed. Username may already be taken.", "Error", CustomMessageBox.MessageBoxButton.OK);
                         return;
                     }
             } catch (System.Exception ex) 
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show($"An error occurred: {ex.Message}", "Error", CustomMessageBox.MessageBoxButton.OK);
                 return;
             }
 

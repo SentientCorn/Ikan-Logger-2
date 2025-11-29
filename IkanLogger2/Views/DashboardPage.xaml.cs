@@ -136,8 +136,8 @@ namespace IkanLogger2.Views
             var card = new Border
             {
                 Background = Brushes.White,
-                BorderBrush = new SolidColorBrush(Color.FromRgb(220, 220, 220)),
-                BorderThickness = new Thickness(1),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                BorderThickness = new Thickness(1.5),
                 CornerRadius = new CornerRadius(5),
                 Margin = new Thickness(0, 0, 0, 10),
                 Padding = new Thickness(12)
@@ -148,10 +148,11 @@ namespace IkanLogger2.Views
             // Tanggal
             var dateText = new TextBlock
             {
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 Text = log.logdate.ToString("dddd, dd MMMM yyyy"),
                 FontWeight = FontWeights.Bold,
                 FontSize = 14,
-                Foreground = new SolidColorBrush(Color.FromRgb(0, 120, 215)),
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                 Margin = new Thickness(0, 0, 0, 8)
             };
             stackPanel.Children.Add(dateText);
@@ -161,9 +162,10 @@ namespace IkanLogger2.Views
             {
                 var notesText = new TextBlock
                 {
+                    FontFamily = new FontFamily("Plus Jakarta Sans"),
                     Text = log.notes,
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = Brushes.DarkGray,
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                     FontSize = 12,
                     Margin = new Thickness(0, 0, 0, 8)
                 };
@@ -188,16 +190,18 @@ namespace IkanLogger2.Views
             var weightStack = new StackPanel();
             var weightLabel = new TextBlock
             {
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 Text = "Total Berat",
                 FontSize = 11,
                 Foreground = Brushes.Gray
             };
             var weightValue = new TextBlock
             {
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 Text = $"{log.totalweight:N2} kg",
                 FontSize = 13,
                 FontWeight = FontWeights.SemiBold,
-                Foreground = Brushes.Black
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
             };
             weightStack.Children.Add(weightLabel);
             weightStack.Children.Add(weightValue);
@@ -211,6 +215,7 @@ namespace IkanLogger2.Views
             };
             var priceLabel = new TextBlock
             {
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 Text = "Total Harga",
                 FontSize = 11,
                 Foreground = Brushes.Gray,
@@ -218,6 +223,7 @@ namespace IkanLogger2.Views
             };
             var priceValue = new TextBlock
             {
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 Text = $"Rp {log.totalprice:N0}",
                 FontSize = 13,
                 FontWeight = FontWeights.SemiBold,

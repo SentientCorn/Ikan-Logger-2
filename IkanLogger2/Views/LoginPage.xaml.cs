@@ -26,10 +26,9 @@ namespace IkanLogger2.Views
             // TODO: Replace this with real authentication logic
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Please enter both username and password.",
+                CustomMessageBox.Show("Please enter both username and password.",
                                 "Login Failed",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
+                                CustomMessageBox.MessageBoxButton.OK);
                 return;
             }
 
@@ -39,28 +38,25 @@ namespace IkanLogger2.Views
 
                 if (user.Id > 0)
                 {
-                    MessageBox.Show("Login successful!",
+                    CustomMessageBox.Show("Login successful!",
                                     "Success",
-                                    MessageBoxButton.OK,
-                                    MessageBoxImage.Information);
+                                    CustomMessageBox.MessageBoxButton.OK);
                     Session.CurrentUser = user;
 
                     NavigationService?.Navigate(new DashboardPage());
                 }
                 else
                 {
-                    MessageBox.Show("Invalid username or password.",
+                    CustomMessageBox.Show("Invalid username or password.",
                                     "Login Failed",
-                                    MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
+                                    CustomMessageBox.MessageBoxButton.OK);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred during login: {ex.Message}",
+                CustomMessageBox.Show($"An error occurred during login: {ex.Message}",
                                 "Login Error",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                                CustomMessageBox.MessageBoxButton.OK);
             }
         }
 

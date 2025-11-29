@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
       xmlns:local="clr-namespace:IkanLogger2.Views"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
       d:DesignHeight="1080" d:DesignWidth="1920"
       Background="#FFF5F5F5"
       Title="DashboardPage">
@@ -102,20 +102,14 @@
                                        Foreground="White" 
                                        FontWeight="Bold" 
                                        FontSize="18"/>
-                            <TextBlock Text="3 Terakhir" 
-                                       FontFamily="Plus Jakarta Sans"
-                                       Foreground="#E0F0FF" 
-                                       FontSize="12"
-                                       Margin="0,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Content Panel Log -->
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                  MaxHeight="400"
+                                  MaxHeight="430"
                                   Padding="15">
                         <StackPanel x:Name="RecentLogsContainer">
-                            <!-- Log items akan di-generate di code-behind -->
                         </StackPanel>
                     </ScrollViewer>
 
