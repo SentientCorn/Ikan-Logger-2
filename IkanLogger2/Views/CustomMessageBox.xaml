@@ -12,7 +12,8 @@
         ResizeMode="NoResize"
         Background="Transparent"
         AllowsTransparency="True">
-    <Border Background="White" 
+    <Border x:Name="MainBorder"
+            Background="White" 
             BorderBrush="#FF1F4F6E" 
             BorderThickness="2" 
             CornerRadius="10"
@@ -26,7 +27,8 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Border Grid.Row="0" 
+            <Border x:Name="HeaderBorder"
+                    Grid.Row="0" 
                     Background="#FF1F4F6E" 
                     CornerRadius="8,8,0,0">
                 <Grid>

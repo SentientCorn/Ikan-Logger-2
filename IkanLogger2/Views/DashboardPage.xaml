@@ -42,7 +42,7 @@
 
                 <!-- Fish Info Panel -->
                 <Border x:Name="FishInfoPanel" 
-                        HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Right" VerticalAlignment="Top" 
                         Margin="20" Padding="15" Width="250"
                         Background="White" CornerRadius="8" Visibility="Collapsed" BorderThickness="3" BorderBrush="#FF1F4F6E">
                     <StackPanel>

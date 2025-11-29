@@ -1,11 +1,12 @@
-﻿using System;
+﻿using IkanLogger2.Core;
+using IkanLogger2.Models;
+using IkanLogger2.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using IkanLogger2.Services;
-using IkanLogger2.Models;
-using IkanLogger2.Core;
+using System.Windows.Media;
 
 namespace IkanLogger2.Views
 {
@@ -13,10 +14,13 @@ namespace IkanLogger2.Views
     {
         private User _currentUser;
         private List<CatchLogDetail> _allLogs;
+        private SolidColorBrush _redColor;
 
+            
         public ProfilePage()
         {
             InitializeComponent();
+            _redColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFD32F2F");
             LoadCurrentUser();
             InitializeMonthComboBox();
         }
@@ -238,12 +242,12 @@ namespace IkanLogger2.Views
         }
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            var result = LogoutMessageBox.Show(
+            var result = CustomMessageBox.Show(
                 "Apakah Anda yakin ingin logout?",
                 "Konfirmasi Logout",
-                LogoutMessageBox.MessageBoxButton.YesNo);
+                CustomMessageBox.MessageBoxButton.YesNo, _redColor, _redColor);
 
-            if (result == LogoutMessageBox.MessageBoxResult.Yes)
+            if (result == CustomMessageBox.MessageBoxResult.Yes)
             {
                 // Clear session
                 Session.CurrentUser = null;
@@ -251,8 +255,8 @@ namespace IkanLogger2.Views
                 // Redirect ke Login page
                 NavigationService?.Navigate(new Uri("Views/LoginPage.xaml", UriKind.Relative));
 
-                LogoutMessageBox.Show("Anda berhasil logout.", "Logout",
-                    LogoutMessageBox.MessageBoxButton.OK);
+                CustomMessageBox.Show("Anda berhasil logout.", "Logout",
+                    CustomMessageBox.MessageBoxButton.OK, _redColor, _redColor);
             }
         }
     }
