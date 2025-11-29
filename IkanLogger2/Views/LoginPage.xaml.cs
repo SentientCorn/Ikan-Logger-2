@@ -45,8 +45,7 @@ namespace IkanLogger2.Views
                                     MessageBoxImage.Information);
                     Session.CurrentUser = user;
 
-                    var main = (MainWindow)Application.Current.MainWindow;
-                    main.MainFrame.Navigate(new DashboardPage());
+                    NavigationService?.Navigate(new DashboardPage());
                 }
                 else
                 {
@@ -67,8 +66,7 @@ namespace IkanLogger2.Views
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            var main = (MainWindow)Application.Current.MainWindow;
-            main.MainFrame.Navigate(new RegisterPage());
+            NavigationService?.Navigate(new RegisterPage());
         }
     }
 }

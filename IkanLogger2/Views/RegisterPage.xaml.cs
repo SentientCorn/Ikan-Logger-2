@@ -17,8 +17,7 @@ namespace IkanLogger2.Views
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            var main = (MainWindow)Application.Current.MainWindow;
-            main.MainFrame.Navigate(new LoginPage());
+            NavigationService?.Navigate(new LoginPage());
         }
 
         private async void Create_Click(object sender, RoutedEventArgs e)
@@ -58,8 +57,7 @@ namespace IkanLogger2.Views
             }
 
 
-            var main = (MainWindow)Application.Current.MainWindow;
-            main.MainFrame.Navigate(new LoginPage());
+            NavigationService?.Navigate(new LoginPage());
         }
     }
 
