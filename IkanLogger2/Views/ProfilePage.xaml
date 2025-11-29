@@ -62,7 +62,7 @@
 
                     <!-- Menu Items -->
                     <Button x:Name="BtnDashboard"
-                            Content="📊 Dashboard"
+                            Content="      📊   Dashboard"
                             Click="BtnDashboard_Click"
                             FontFamily="Plus Jakarta Sans"
                             FontSize="16"
@@ -91,6 +91,7 @@
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="Background" Value="#FF8BD8F0"/>
                                         <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -98,7 +99,7 @@
                     </Button>
 
                     <Button x:Name="BtnEditProfile"
-                            Content="✏️ Edit Profile"
+                            Content="      ✏️   Edit Profile"
                             Click="BtnEditProfile_Click"
                             FontFamily="Plus Jakarta Sans"
                             FontSize="16"
@@ -126,6 +127,7 @@
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="Background" Value="#FF8BD8F0"/>
                                         <Setter Property="Foreground" Value="#FF1F4F6E"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -142,7 +144,7 @@
                               Visibility="Visible">
                     <StackPanel Margin="40,40,40,40">
                         <!-- Title -->
-                        <Border HorizontalAlignment="Left"
+                        <Border HorizontalAlignment="Center"
                                 Background="White"
                                 CornerRadius="15"
                                 Padding="30,15"
@@ -171,11 +173,12 @@
                                     Background="White" 
                                     CornerRadius="15" 
                                     Padding="25"
-                                    BorderThickness="2"
+                                    BorderThickness="3"
                                     BorderBrush="#FF1F4F6E">
                                 <StackPanel>
                                     <TextBlock Text="🎣" 
-                                               FontSize="40" 
+                                               FontSize="40"
+                                               Foreground="#FF1F4F6E"
                                                HorizontalAlignment="Center"
                                                Margin="0,0,0,10"/>
                                     <TextBlock Text="Total Tangkapan" 
@@ -199,10 +202,11 @@
                                     Background="White" 
                                     CornerRadius="15" 
                                     Padding="25"
-                                    BorderThickness="2"
+                                    BorderThickness="3"
                                     BorderBrush="#FF1F4F6E">
                                 <StackPanel>
-                                    <TextBlock Text="⚖️" 
+                                    <TextBlock Text="⚖️"
+                                               Foreground="#FF1F4F6E"
                                                FontSize="40" 
                                                HorizontalAlignment="Center"
                                                Margin="0,0,0,10"/>
@@ -227,10 +231,11 @@
                                     Background="White" 
                                     CornerRadius="15" 
                                     Padding="25"
-                                    BorderThickness="2"
+                                    BorderThickness="3"
                                     BorderBrush="#FF1F4F6E">
                                 <StackPanel>
-                                    <TextBlock Text="💰" 
+                                    <TextBlock Text="💰"
+                                               Foreground="#FF1F4F6E"
                                                FontSize="40" 
                                                HorizontalAlignment="Center"
                                                Margin="0,0,0,10"/>
@@ -264,10 +269,11 @@
                                     Background="White" 
                                     CornerRadius="15" 
                                     Padding="25"
-                                    BorderThickness="2"
+                                    BorderThickness="3"
                                     BorderBrush="#FF1F4F6E">
                                 <StackPanel>
-                                    <TextBlock Text="📈" 
+                                    <TextBlock Text="📈"
+                                               Foreground="#FF1F4F6E"
                                                FontSize="40" 
                                                HorizontalAlignment="Center"
                                                Margin="0,0,0,10"/>
@@ -292,10 +298,11 @@
                                     Background="White" 
                                     CornerRadius="15" 
                                     Padding="25"
-                                    BorderThickness="2"
+                                    BorderThickness="3"
                                     BorderBrush="#FF1F4F6E">
                                 <StackPanel>
-                                    <TextBlock Text="💵" 
+                                    <TextBlock Text="💵"
+                                               Foreground="#FF1F4F6E"
                                                FontSize="40" 
                                                HorizontalAlignment="Center"
                                                Margin="0,0,0,10"/>
@@ -320,7 +327,7 @@
                         <Border Background="White" 
                                 CornerRadius="15" 
                                 Padding="30"
-                                BorderThickness="2"
+                                BorderThickness="3"
                                 BorderBrush="#FF1F4F6E"
                                 Margin="0,0,0,20">
                             <StackPanel>
@@ -364,7 +371,7 @@
                                                    FontSize="14" 
                                                    Foreground="#FF1F4F6E"/>
                                         <TextBlock x:Name="TxtMonthCatch"
-                                                   Text="0 Log" 
+                                                   Text="0 Tangkapan" 
                                                    FontFamily="Plus Jakarta Sans"
                                                    FontSize="20" 
                                                    FontWeight="Bold"
@@ -404,7 +411,7 @@
                         <Border Background="White" 
                                 CornerRadius="15" 
                                 Padding="30"
-                                BorderThickness="2"
+                                BorderThickness="3"
                                 BorderBrush="#FF1F4F6E">
                             <StackPanel>
                                 <TextBlock Text="Ikan Paling Sering Ditangkap" 
@@ -433,7 +440,8 @@
 
                                                     <TextBlock Text="{Binding FishName}" 
                                                                FontFamily="Plus Jakarta Sans"
-                                                               FontSize="16" 
+                                                               FontSize="16"
+                                                               Padding="5,0"
                                                                FontWeight="SemiBold"
                                                                Foreground="#FF1F4F6E"
                                                                VerticalAlignment="Center"/>
@@ -469,6 +477,8 @@
                             Padding="40"
                             CornerRadius="20"
                             Width="540"
+                            BorderThickness="3"
+                            BorderBrush="#FF1F4F6E"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center">
                         <StackPanel>

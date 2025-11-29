@@ -76,14 +76,14 @@ namespace IkanLogger2.Views
             {
                 Background = Brushes.White,
                 BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
-                BorderThickness = new Thickness(1),
+                BorderThickness = new Thickness(3),
                 CornerRadius = new CornerRadius(8),
                 Margin = new Thickness(0, 0, 0, 20)
             };
 
             var mainStack = new StackPanel
             {
-                Margin = new Thickness(0) // Remove margin from main stack
+                Margin = new Thickness(0)
             };
 
             // === HEADER BLUE SECTION ===
@@ -152,7 +152,7 @@ namespace IkanLogger2.Views
 
                 var notesText = new TextBlock
                 {
-                    Text = log.notes,
+                    Text = $"Catatan: {log.notes}",
                     FontFamily = new FontFamily("Plus Jakarta Sans"),
                     TextWrapping = TextWrapping.Wrap,
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
@@ -242,7 +242,7 @@ namespace IkanLogger2.Views
                 {
                     Background = new SolidColorBrush(Color.FromRgb(248, 249, 250)),
                     BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
-                    BorderThickness = new Thickness(1),
+                    BorderThickness = new Thickness(2),
                     CornerRadius = new CornerRadius(5),
                     Padding = new Thickness(12, 12, 12, 12)
                 };

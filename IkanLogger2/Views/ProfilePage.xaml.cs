@@ -93,12 +93,12 @@ namespace IkanLogger2.Views
 
         private void SetEmptyDashboard()
         {
-            TxtTotalCatch.Text = "0 Log";
+            TxtTotalCatch.Text = "0 Tangkapan";
             TxtTotalWeight.Text = "0 Kg";
             TxtTotalRevenue.Text = "Rp 0";
             TxtAvgWeight.Text = "0 Kg";
             TxtAvgRevenue.Text = "Rp 0";
-            TxtMonthCatch.Text = "0 Log";
+            TxtMonthCatch.Text = "0 Tangkapan";
             TxtMonthWeight.Text = "0 Kg";
             TxtMonthRevenue.Text = "Rp 0";
             TopFishListView.ItemsSource = null;
@@ -117,13 +117,13 @@ namespace IkanLogger2.Views
 
             if (monthlyLogs.Any())
             {
-                TxtMonthCatch.Text = $"{monthlyLogs.Count} Log";
+                TxtMonthCatch.Text = $"{monthlyLogs.Count} Tangkapan";
                 TxtMonthWeight.Text = $"{monthlyLogs.Sum(l => l.totalweight):N2} Kg";
                 TxtMonthRevenue.Text = $"Rp {monthlyLogs.Sum(l => l.totalprice):N0}";
             }
             else
             {
-                TxtMonthCatch.Text = "0 Log";
+                TxtMonthCatch.Text = "0 Tangkapan";
                 TxtMonthWeight.Text = "0 Kg";
                 TxtMonthRevenue.Text = "Rp 0";
             }
