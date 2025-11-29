@@ -1,15 +1,16 @@
 ﻿using GMap.NET;
 using GMap.NET.WindowsPresentation;
+using IkanLogger2.Core;
+using IkanLogger2.Models;
 using IkanLogger2.Services;
-using IkanLogger.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Input;
 
 namespace IkanLogger2.Views
 {
@@ -56,11 +57,153 @@ namespace IkanLogger2.Views
 
                 // Render awal (tampilkan semua)
                 RenderMarkers(_allLocations);
+
+                await LoadRecentLogs(Session.CurrentUser.Id);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading data: {ex.Message}");
             }
+        }
+
+        // Method baru: Load Recent Logs
+        private async Task LoadRecentLogs(int userId)
+        {
+            try
+            {
+                var logs = await LogService.GetRecentLog(userId);
+
+                RecentLogsContainer.Children.Clear();
+
+                if (logs == null || logs.Count == 0)
+                {
+                    var emptyText = new TextBlock
+                    {
+                        Text = "Belum ada log tangkapan",
+                        Foreground = Brushes.Gray,
+                        FontStyle = FontStyles.Italic,
+                        TextAlignment = TextAlignment.Center,
+                        Margin = new Thickness(0, 20, 0, 0)
+                    };
+                    RecentLogsContainer.Children.Add(emptyText);
+                    return;
+                }
+
+                foreach (var log in logs)
+                {
+                    var logCard = CreateLogCard(log);
+                    RecentLogsContainer.Children.Add(logCard);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading logs: {ex.Message}");
+            }
+        }
+
+        // Method baru: Membuat Card untuk setiap Log
+        private Border CreateLogCard(CatchLog log)
+        {
+            var card = new Border
+            {
+                Background = Brushes.White,
+                BorderBrush = new SolidColorBrush(Color.FromRgb(220, 220, 220)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(5),
+                Margin = new Thickness(0, 0, 0, 10),
+                Padding = new Thickness(12)
+            };
+
+            var stackPanel = new StackPanel();
+
+            // Tanggal
+            var dateText = new TextBlock
+            {
+                Text = log.logdate.ToString("dddd, dd MMMM yyyy"),
+                FontWeight = FontWeights.Bold,
+                FontSize = 14,
+                Foreground = new SolidColorBrush(Color.FromRgb(0, 120, 215)),
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            stackPanel.Children.Add(dateText);
+
+            // Notes
+            if (!string.IsNullOrWhiteSpace(log.notes))
+            {
+                var notesText = new TextBlock
+                {
+                    Text = log.notes,
+                    TextWrapping = TextWrapping.Wrap,
+                    Foreground = Brushes.DarkGray,
+                    FontSize = 12,
+                    Margin = new Thickness(0, 0, 0, 8)
+                };
+                stackPanel.Children.Add(notesText);
+            }
+
+            // Separator
+            var separator = new Border
+            {
+                Height = 1,
+                Background = new SolidColorBrush(Color.FromRgb(230, 230, 230)),
+                Margin = new Thickness(0, 5, 0, 8)
+            };
+            stackPanel.Children.Add(separator);
+
+            // Info Grid (Weight & Price)
+            var infoGrid = new Grid();
+            infoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            infoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            // Total Weight
+            var weightStack = new StackPanel();
+            var weightLabel = new TextBlock
+            {
+                Text = "Total Berat",
+                FontSize = 11,
+                Foreground = Brushes.Gray
+            };
+            var weightValue = new TextBlock
+            {
+                Text = $"{log.totalweight:N2} kg",
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = Brushes.Black
+            };
+            weightStack.Children.Add(weightLabel);
+            weightStack.Children.Add(weightValue);
+            Grid.SetColumn(weightStack, 0);
+            infoGrid.Children.Add(weightStack);
+
+            // Total Price
+            var priceStack = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            var priceLabel = new TextBlock
+            {
+                Text = "Total Harga",
+                FontSize = 11,
+                Foreground = Brushes.Gray,
+                TextAlignment = TextAlignment.Right
+            };
+            var priceValue = new TextBlock
+            {
+                Text = $"Rp {log.totalprice:N0}",
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromRgb(34, 139, 34)),
+                TextAlignment = TextAlignment.Right
+            };
+            priceStack.Children.Add(priceLabel);
+            priceStack.Children.Add(priceValue);
+            Grid.SetColumn(priceStack, 1);
+            infoGrid.Children.Add(priceStack);
+
+            stackPanel.Children.Add(infoGrid);
+            card.Child = stackPanel;
+
+            return card;
         }
 
         // Event saat Dropdown diganti
@@ -271,6 +414,18 @@ namespace IkanLogger2.Views
         private void CloseInfoPanel_Click(object sender, RoutedEventArgs e)
         {
             FishInfoPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void BtnCreateNewLog_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: Implementasi navigasi ke halaman create log
+            MessageBox.Show("Fitur buat catatan baru akan segera hadir!",
+                            "Info",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+
+            // Nanti bisa diganti dengan:
+            // NavigationService?.Navigate(new CreateLogPage());
         }
     }
 }

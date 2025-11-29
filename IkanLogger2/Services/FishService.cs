@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace IkanLogger.Services
+namespace IkanLogger2.Services
 {
     public static class FishService
     {
@@ -62,7 +62,6 @@ namespace IkanLogger.Services
                         IdFish = Convert.ToInt32(reader["idfish"]),
                         FishName = reader["fishname"].ToString(),
                         MarketPrice = Convert.ToDouble(reader["marketprice"]),
-                        // IdLocation di dalam objek Fish tidak perlu diisi lagi karena sudah di-handle parent
                     });
                 }
             }
