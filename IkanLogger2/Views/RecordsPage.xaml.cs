@@ -25,22 +25,22 @@ namespace IkanLogger2.Views
             try
             {
                 // Validasi session user
-                if (Session.CurrentUser == null || Session.CurrentUser.Id <= 0)
-                {
-                    MessageBox.Show("Silakan login terlebih dahulu",
-                                  "Session Error",
-                                  MessageBoxButton.OK,
-                                  MessageBoxImage.Warning);
-                    NavigationService?.Navigate(new LoginPage());
-                    return;
-                }
+                //if (Session.CurrentUser == null || Session.CurrentUser.Id <= 0)
+                //{
+                //    MessageBox.Show("Silakan login terlebih dahulu",
+                //                  "Session Error",
+                //                  MessageBoxButton.OK,
+                //                  MessageBoxImage.Warning);
+                //    NavigationService?.Navigate(new LoginPage());
+                //    return;
+                //}
 
                 // Show loading
                 LoadingPanel.Visibility = Visibility.Visible;
                 RecordsContainer.Children.Clear();
 
                 // Load data
-                var logs = await LogService.GetAllLogs(Session.CurrentUser.Id);
+                var logs = await LogService.GetAllLogs(1);//Session.CurrentUser.Id
 
                 // Hide loading
                 LoadingPanel.Visibility = Visibility.Collapsed;
@@ -56,7 +56,7 @@ namespace IkanLogger2.Views
                 // Render cards dengan styling baru
                 foreach (var log in logs)
                 {
-                    var card = CreateStyledLogCard(log);
+                    var card = CreateDetailedLogCard(log);
                     RecordsContainer.Children.Add(card);
                 }
             }
@@ -70,181 +70,98 @@ namespace IkanLogger2.Views
             }
         }
 
-        // Card dengan styling sesuai gambar
-        private Border CreateStyledLogCard(CatchLogDetail log)
-        {
-            // Main Card Border
-            var card = new Border
-            {
-                Width = 280,
-                Margin = new Thickness(15, 15, 15, 15), // Fixed Thickness
-                Background = Brushes.White,
-                CornerRadius = new CornerRadius(12),
-                Effect = new DropShadowEffect
-                {
-                    Color = Colors.Black,
-                    BlurRadius = 15,
-                    ShadowDepth = 0,
-                    Opacity = 0.2
-                }
-            };
-
-            var stackPanel = new StackPanel();
-
-            // Header (Date) - warna biru
-            var header = new Border
-            {
-                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2A5F7E")),
-                CornerRadius = new CornerRadius(12, 12, 0, 0),
-                Padding = new Thickness(15, 12, 15, 12) // Fixed Thickness
-            };
-
-            var dateText = new TextBlock
-            {
-                Text = log.logdate.ToString("dddd, dd MMMM yyyy"),
-                FontFamily = new FontFamily("Plus Jakarta Sans"),
-                FontSize = 14,
-                FontWeight = FontWeights.SemiBold,
-                Foreground = Brushes.White
-            };
-
-            header.Child = dateText;
-            stackPanel.Children.Add(header);
-
-            // Content - Gunakan Border untuk padding
-            var contentBorder = new Border
-            {
-                Padding = new Thickness(15, 15, 15, 15) // Fixed Thickness
-            };
-
-            var contentPanel = new StackPanel();
-
-            // Location/Notes
-            var locationText = new TextBlock
-            {
-                Text = !string.IsNullOrWhiteSpace(log.notes) ? log.notes : "Catatan Tangkapan",
-                FontFamily = new FontFamily("Plus Jakarta Sans"),
-                FontSize = 15,
-                FontWeight = FontWeights.SemiBold,
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
-                Margin = new Thickness(0, 0, 0, 8),
-                TextWrapping = TextWrapping.Wrap
-            };
-            contentPanel.Children.Add(locationText);
-
-            // Fish Catched Label
-            var fishLabel = new TextBlock
-            {
-                Text = "Fish Catched:",
-                FontFamily = new FontFamily("Plus Jakarta Sans"),
-                FontSize = 13,
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
-                Margin = new Thickness(0, 0, 0, 5)
-            };
-            contentPanel.Children.Add(fishLabel);
-
-            // Fish List
-            if (log.Catches != null && log.Catches.Count > 0)
-            {
-                foreach (var fish in log.Catches)
-                {
-                    var fishItem = new TextBlock
-                    {
-                        Text = $"• {fish.fishname} : {fish.weight:N2} Kg",
-                        FontFamily = new FontFamily("Plus Jakarta Sans"),
-                        FontSize = 12,
-                        Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
-                        Margin = new Thickness(0, 0, 0, 3)
-                    };
-                    contentPanel.Children.Add(fishItem);
-                }
-            }
-
-            contentBorder.Child = contentPanel;
-            stackPanel.Children.Add(contentBorder);
-            card.Child = stackPanel;
-
-            return card;
-        }
-
         private Border CreateDetailedLogCard(CatchLogDetail log)
         {
             var card = new Border
             {
                 Background = Brushes.White,
-                BorderBrush = new SolidColorBrush(Color.FromRgb(220, 220, 220)),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8),
-                Margin = new Thickness(0, 0, 0, 20),
-                Padding = new Thickness(20, 20, 20, 20) // Fixed Thickness
+                Margin = new Thickness(0, 0, 0, 20)
             };
 
-            // Add shadow effect
-            card.Effect = new DropShadowEffect
+            var mainStack = new StackPanel
             {
-                Color = Colors.Black,
-                BlurRadius = 10,
-                ShadowDepth = 2,
-                Opacity = 0.1
+                Margin = new Thickness(0) // Remove margin from main stack
             };
 
-            var mainStack = new StackPanel();
+            // === HEADER BLUE SECTION ===
+            var headerBorder = new Border
+            {
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                CornerRadius = new CornerRadius(6, 6, 0, 0),
+                Padding = new Thickness(16, 12, 16, 12)
+            };
 
-            // === HEADER SECTION ===
             var headerGrid = new Grid();
             headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            // Date
+            // DATE (kiri) - seperti pada gambar
             var dateText = new TextBlock
             {
                 Text = log.logdate.ToString("dddd, dd MMMM yyyy"),
                 FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontWeight = FontWeights.Bold,
                 FontSize = 16,
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E"))
+                Foreground = Brushes.White,
+                VerticalAlignment = VerticalAlignment.Center
             };
             Grid.SetColumn(dateText, 0);
             headerGrid.Children.Add(dateText);
 
-            // Time
+
+            // Time (right side)
             var timeText = new TextBlock
             {
                 Text = log.logdate.ToString("HH:mm"),
                 FontFamily = new FontFamily("Plus Jakarta Sans"),
-                FontSize = 14,
-                Foreground = Brushes.Gray,
-                HorizontalAlignment = HorizontalAlignment.Right
+                FontWeight = FontWeights.Bold,
+                FontSize = 18,
+                VerticalAlignment = VerticalAlignment.Top,
+                Foreground = Brushes.White
             };
             Grid.SetColumn(timeText, 1);
             headerGrid.Children.Add(timeText);
 
-            mainStack.Children.Add(headerGrid);
 
-            // Notes (if exists)
+            headerBorder.Child = headerGrid;
+            mainStack.Children.Add(headerBorder);
+
+            // === CONTENT SECTION ===
+            var contentBorder = new Border
+            {
+                Padding = new Thickness(16, 16, 16, 16)
+            };
+
+            var contentStack = new StackPanel();
+
+            // NOTES SECTION (jika ada)
             if (!string.IsNullOrWhiteSpace(log.notes))
             {
+                var notesBorder = new Border
+                {
+                    Background = new SolidColorBrush(Color.FromRgb(248, 249, 250)),
+                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(4),
+                    Padding = new Thickness(12, 8, 12, 8),
+                    Margin = new Thickness(0, 0, 0, 15)
+                };
+
                 var notesText = new TextBlock
                 {
                     Text = log.notes,
                     FontFamily = new FontFamily("Plus Jakarta Sans"),
                     TextWrapping = TextWrapping.Wrap,
-                    Foreground = Brushes.DarkGray,
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                     FontSize = 13,
-                    Margin = new Thickness(0, 8, 0, 0),
                     FontStyle = FontStyles.Italic
                 };
-                mainStack.Children.Add(notesText);
+                notesBorder.Child = notesText;
+                contentStack.Children.Add(notesBorder);
             }
-
-            // Separator 1
-            var separator1 = new Border
-            {
-                Height = 1,
-                Background = new SolidColorBrush(Color.FromRgb(230, 230, 230)),
-                Margin = new Thickness(0, 15, 0, 15)
-            };
-            mainStack.Children.Add(separator1);
 
             // === SUMMARY SECTION ===
             var summaryGrid = new Grid
@@ -269,7 +186,7 @@ namespace IkanLogger2.Views
                 FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 18,
                 FontWeight = FontWeights.Bold,
-                Foreground = Brushes.Black
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
             };
             weightStack.Children.Add(weightLabel);
             weightStack.Children.Add(weightValue);
@@ -303,7 +220,7 @@ namespace IkanLogger2.Views
             Grid.SetColumn(priceStack, 1);
             summaryGrid.Children.Add(priceStack);
 
-            mainStack.Children.Add(summaryGrid);
+            contentStack.Children.Add(summaryGrid);
 
             // === FISH CATCHES SECTION ===
             if (log.Catches != null && log.Catches.Count > 0)
@@ -311,23 +228,23 @@ namespace IkanLogger2.Views
                 // Section Header
                 var fishHeader = new TextBlock
                 {
-                    Text = $"Detail Tangkapan ({log.Catches.Count} jenis ikan)",
+                    Text = $"Detail Tangkapan ({log.Catches.Count} Jenis Ikan)",
                     FontFamily = new FontFamily("Plus Jakarta Sans"),
                     FontWeight = FontWeights.SemiBold,
                     FontSize = 14,
                     Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                     Margin = new Thickness(0, 0, 0, 10)
                 };
-                mainStack.Children.Add(fishHeader);
+                contentStack.Children.Add(fishHeader);
 
                 // Fish List
                 var fishListBorder = new Border
                 {
                     Background = new SolidColorBrush(Color.FromRgb(248, 249, 250)),
-                    BorderBrush = new SolidColorBrush(Color.FromRgb(230, 230, 230)),
+                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(5),
-                    Padding = new Thickness(12, 12, 12, 12) // Fixed Thickness
+                    Padding = new Thickness(12, 12, 12, 12)
                 };
 
                 var fishListStack = new StackPanel();
@@ -351,10 +268,13 @@ namespace IkanLogger2.Views
                 }
 
                 fishListBorder.Child = fishListStack;
-                mainStack.Children.Add(fishListBorder);
+                contentStack.Children.Add(fishListBorder);
             }
 
+            contentBorder.Child = contentStack;
+            mainStack.Children.Add(contentBorder);
             card.Child = mainStack;
+
             return card;
         }
 
@@ -370,7 +290,8 @@ namespace IkanLogger2.Views
             {
                 Text = fish.fishname,
                 FontFamily = new FontFamily("Plus Jakarta Sans"),
-                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                FontWeight = FontWeights.Bold,
                 FontSize = 13,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -383,7 +304,7 @@ namespace IkanLogger2.Views
                 Text = $"{fish.weight:N2} kg",
                 FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 13,
-                Foreground = Brushes.Gray,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
                 VerticalAlignment = VerticalAlignment.Center,
                 TextAlignment = TextAlignment.Center
             };
