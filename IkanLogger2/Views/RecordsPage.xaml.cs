@@ -63,10 +63,9 @@ namespace IkanLogger2.Views
             catch (Exception ex)
             {
                 LoadingPanel.Visibility = Visibility.Collapsed;
-                MessageBox.Show($"Error loading records: {ex.Message}",
+                CustomMessageBox.Show($"Error loading records: {ex.Message}",
                               "Error",
-                              MessageBoxButton.OK,
-                              MessageBoxImage.Error);
+                              CustomMessageBox.MessageBoxButton.OK);
             }
         }
 

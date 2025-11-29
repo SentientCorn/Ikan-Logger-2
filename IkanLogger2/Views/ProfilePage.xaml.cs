@@ -33,8 +33,8 @@ namespace IkanLogger2.Views
             }
             else
             {
-                MessageBox.Show("User tidak ditemukan. Silakan login kembali.", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show("User tidak ditemukan. Silakan login kembali.", "Error",
+                    CustomMessageBox.MessageBoxButton.OK);
             }
         }
 
@@ -86,8 +86,8 @@ namespace IkanLogger2.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading dashboard: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show($"Error loading dashboard: {ex.Message}", "Error",
+                    CustomMessageBox.MessageBoxButton.OK);
             }
         }
 
@@ -200,8 +200,8 @@ namespace IkanLogger2.Views
         {
             if (_currentUser == null)
             {
-                MessageBox.Show("User tidak ditemukan.", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show("User tidak ditemukan.", "Error",
+                    CustomMessageBox.MessageBoxButton.OK);
                 return;
             }
 
@@ -210,8 +210,8 @@ namespace IkanLogger2.Views
 
             if (string.IsNullOrEmpty(newUsername))
             {
-                MessageBox.Show("Username tidak boleh kosong.", "Validasi",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                CustomMessageBox.Show("Username tidak boleh kosong.", "Validasi",
+                    CustomMessageBox.MessageBoxButton.OK);
                 return;
             }
 
@@ -225,8 +225,8 @@ namespace IkanLogger2.Views
 
                 if (success)
                 {
-                    MessageBox.Show("Profile berhasil diupdate!", "Sukses",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    CustomMessageBox.Show("Profile berhasil diupdate!", "Sukses",
+                        CustomMessageBox.MessageBoxButton.OK);
 
                     _currentUser = new User(_currentUser.Id, newUsername);
                     Session.CurrentUser = _currentUser;
@@ -236,14 +236,14 @@ namespace IkanLogger2.Views
                 }
                 else
                 {
-                    MessageBox.Show("Gagal mengupdate profile. Username mungkin sudah digunakan.",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show("Gagal mengupdate profile. Username mungkin sudah digunakan.",
+                        "Error", CustomMessageBox.MessageBoxButton.OK);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Terjadi kesalahan: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show($"Terjadi kesalahan: {ex.Message}", "Error",
+                    CustomMessageBox.MessageBoxButton.OK);
             }
         }
     }

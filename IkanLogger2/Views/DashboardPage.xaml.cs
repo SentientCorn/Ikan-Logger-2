@@ -38,7 +38,7 @@ namespace IkanLogger2.Views
 
                 if (_allLocations == null || _allLocations.Count == 0)
                 {
-                    MessageBox.Show("Tidak ada data lokasi ikan");
+                    CustomMessageBox.Show("Tidak ada data lokasi ikan");
                     return;
                 }
 
@@ -62,7 +62,7 @@ namespace IkanLogger2.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading data: {ex.Message}");
+                CustomMessageBox.Show($"Error loading data: {ex.Message}");
             }
         }
 
@@ -97,7 +97,7 @@ namespace IkanLogger2.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading logs: {ex.Message}");
+                CustomMessageBox.Show($"Error loading logs: {ex.Message}");
             }
         }
 

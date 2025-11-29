@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,7 +33,7 @@ namespace IkanLogger2.Views
                 // Validasi session
                 if (Session.CurrentUser == null)
                 {
-                    MessageBox.Show("Silakan login terlebih dahulu");
+                    CustomMessageBox.Show("Silakan login terlebih dahulu", "Session Error");
                     NavigationService?.Navigate(new LoginPage());
                     return;
                 }
@@ -43,13 +42,29 @@ namespace IkanLogger2.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading fish data: {ex.Message}");
+                CustomMessageBox.Show($"Error loading fish data: {ex.Message}", "Error");
             }
+        }
+
+        // Handle placeholder untuk Notes
+        private void TxtNotes_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TxtNotesPlaceholder.Visibility = string.IsNullOrEmpty(TxtNotes.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         // Autocomplete untuk pencarian ikan
         private void TxtFishSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
+            Console.WriteLine($"Text changed: {TxtFishSearch.Text}");
+
+            // Handle placeholder
+            TxtFishSearchPlaceholder.Visibility = string.IsNullOrEmpty(TxtFishSearch.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            // Autocomplete logic
             string searchText = TxtFishSearch.Text.ToLower();
 
             if (string.IsNullOrWhiteSpace(searchText))
@@ -58,9 +73,11 @@ namespace IkanLogger2.Views
                 return;
             }
 
-            var filtered = _allFishes
+            var filtered = _allFishes?
                 .Where(f => f.FishName.ToLower().Contains(searchText))
-                .ToList();
+                .ToList() ?? new List<Fish>();
+
+            Console.WriteLine($"Filtered count: {filtered.Count}");
 
             if (filtered.Count > 0)
             {
@@ -120,14 +137,26 @@ namespace IkanLogger2.Views
                                    weight > 0;
         }
 
+        // Handle placeholder untuk Weight
+        private void TxtWeight_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Handle placeholder
+            TxtWeightPlaceholder.Visibility = string.IsNullOrEmpty(TxtWeight.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            // Validation logic
+            UpdateAddButtonState();
+        }
+
         private void BtnAddFish_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedFish == null || !double.TryParse(TxtWeight.Text, out double weight) || weight <= 0)
             {
-                MessageBox.Show("Pilih ikan dan masukkan berat yang valid",
-                              "Input Tidak Valid",
-                              MessageBoxButton.OK,
-                              MessageBoxImage.Warning);
+                CustomMessageBox.Show(
+                    "Pilih ikan dan masukkan berat yang valid",
+                    "Input Tidak Valid",
+                    CustomMessageBox.MessageBoxButton.OK);
                 return;
             }
 
@@ -181,11 +210,11 @@ namespace IkanLogger2.Views
         {
             var card = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(248, 249, 250)),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(220, 220, 220)),
-                BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(5),
-                Padding = new Thickness(12),
+                Background = new SolidColorBrush(Color.FromRgb(232, 245, 255)),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(15),
                 Margin = new Thickness(0, 0, 0, 10)
             };
 
@@ -201,8 +230,10 @@ namespace IkanLogger2.Views
             var nameText = new TextBlock
             {
                 Text = item.FishName,
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontWeight = FontWeights.SemiBold,
-                FontSize = 13
+                FontSize = 14,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E"))
             };
             Grid.SetColumn(nameText, 0);
             headerGrid.Children.Add(nameText);
@@ -210,11 +241,12 @@ namespace IkanLogger2.Views
             var deleteBtn = new Button
             {
                 Content = "🗑",
-                Width = 25,
-                Height = 25,
+                Width = 28,
+                Height = 28,
                 Background = Brushes.Transparent,
                 BorderThickness = new Thickness(0),
-                Foreground = Brushes.Red,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                FontSize = 16,
                 Cursor = Cursors.Hand,
                 Tag = item
             };
@@ -228,24 +260,26 @@ namespace IkanLogger2.Views
             // Row 1 - Details
             var detailStack = new StackPanel
             {
-                Margin = new Thickness(0, 5, 0, 0)
+                Margin = new Thickness(0, 8, 0, 0)
             };
 
             var weightText = new TextBlock
             {
                 Text = $"Berat: {item.Weight:N2} kg",
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
                 FontSize = 12,
-                Foreground = Brushes.Gray
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2A5F7E"))
             };
             detailStack.Children.Add(weightText);
 
             var priceText = new TextBlock
             {
                 Text = $"Total: Rp {item.TotalPrice:N0}",
-                FontSize = 12,
+                FontFamily = new FontFamily("Plus Jakarta Sans"),
+                FontSize = 13,
                 FontWeight = FontWeights.SemiBold,
-                Foreground = new SolidColorBrush(Color.FromRgb(40, 167, 69)),
-                Margin = new Thickness(0, 2, 0, 0)
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1F4F6E")),
+                Margin = new Thickness(0, 3, 0, 0)
             };
             detailStack.Children.Add(priceText);
 
@@ -260,10 +294,18 @@ namespace IkanLogger2.Views
         {
             if (sender is Button btn && btn.Tag is TempCatchItem item)
             {
-                _catchItems.Remove(item);
-                RefreshCatchList();
-                UpdateSummary();
-                BtnSave.IsEnabled = _catchItems.Count > 0;
+                var result = CustomMessageBox.Show(
+                    $"Hapus {item.FishName} dari daftar?",
+                    "Konfirmasi",
+                    CustomMessageBox.MessageBoxButton.YesNo);
+
+                if (result == CustomMessageBox.MessageBoxResult.Yes)
+                {
+                    _catchItems.Remove(item);
+                    RefreshCatchList();
+                    UpdateSummary();
+                    BtnSave.IsEnabled = _catchItems.Count > 0;
+                }
             }
         }
 
@@ -276,26 +318,23 @@ namespace IkanLogger2.Views
             TxtTotalPrice.Text = $"Rp {totalPrice:N0}";
         }
 
-        // Replace the BtnSave_Click method in CreateLogPage.xaml.cs:
-
         private async void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             if (_catchItems.Count == 0)
             {
-                MessageBox.Show("Tambahkan minimal satu ikan tangkapan",
-                              "Data Tidak Lengkap",
-                              MessageBoxButton.OK,
-                              MessageBoxImage.Warning);
+                CustomMessageBox.Show(
+                    "Tambahkan minimal satu ikan tangkapan",
+                    "Data Tidak Lengkap",
+                    CustomMessageBox.MessageBoxButton.OK);
                 return;
             }
 
-            var result = MessageBox.Show(
+            var result = CustomMessageBox.Show(
                 $"Simpan catatan tangkapan dengan {_catchItems.Count} jenis ikan?",
                 "Konfirmasi",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
+                CustomMessageBox.MessageBoxButton.YesNo);
 
-            if (result != MessageBoxResult.Yes)
+            if (result != CustomMessageBox.MessageBoxResult.Yes)
                 return;
 
             string notes = TxtNotes.Text;
@@ -311,7 +350,6 @@ namespace IkanLogger2.Views
                 BtnSave.IsEnabled = false;
                 BtnSave.Content = "⏳ Menyimpan...";
 
-                // FIXED: Call async method directly without Task.Run
                 bool success = await LogService.CreateCatchLogAsync(
                     Session.CurrentUser.Id,
                     notes,
@@ -320,47 +358,23 @@ namespace IkanLogger2.Views
 
                 if (success)
                 {
-                    MessageBox.Show("Catatan tangkapan berhasil disimpan!",
-                                  "Berhasil",
-                                  MessageBoxButton.OK,
-                                  MessageBoxImage.Information);
+                    CustomMessageBox.Show(
+                        "Catatan tangkapan berhasil disimpan!",
+                        "Berhasil",
+                        CustomMessageBox.MessageBoxButton.OK);
 
                     NavigationService?.GoBack();
                 }
             }
             catch (Exception ex)
             {
-                var errorMessage = new System.Text.StringBuilder();
-                errorMessage.AppendLine("=== ERROR DETAILS ===");
-                errorMessage.AppendLine();
-                errorMessage.AppendLine($"Message: {ex.Message}");
-                errorMessage.AppendLine();
-                errorMessage.AppendLine($"Type: {ex.GetType().Name}");
-                errorMessage.AppendLine();
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
 
-                if (ex.InnerException != null)
-                {
-                    errorMessage.AppendLine("=== INNER EXCEPTION ===");
-                    errorMessage.AppendLine($"Message: {ex.InnerException.Message}");
-                    errorMessage.AppendLine($"Type: {ex.InnerException.GetType().Name}");
-                    errorMessage.AppendLine();
-                }
-
-                errorMessage.AppendLine("=== STACK TRACE ===");
-                errorMessage.AppendLine(ex.StackTrace);
-
-                if (ex.InnerException != null && ex.InnerException.StackTrace != null)
-                {
-                    errorMessage.AppendLine();
-                    errorMessage.AppendLine("=== INNER STACK TRACE ===");
-                    errorMessage.AppendLine(ex.InnerException.StackTrace);
-                }
-
-                System.Diagnostics.Debug.WriteLine(errorMessage.ToString());
-                MessageBox.Show($"Error: {ex.Message}",
-                              "Error",
-                              MessageBoxButton.OK,
-                              MessageBoxImage.Error);
+                CustomMessageBox.Show(
+                    $"Error: {ex.Message}",
+                    "Error",
+                    CustomMessageBox.MessageBoxButton.OK);
             }
             finally
             {
@@ -371,20 +385,15 @@ namespace IkanLogger2.Views
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = CustomMessageBox.Show(
                 "Batalkan pembuatan catatan? Data yang sudah diisi akan hilang.",
                 "Konfirmasi",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
+                CustomMessageBox.MessageBoxButton.YesNo);
 
-            if (result == MessageBoxResult.Yes)
+            if (result == CustomMessageBox.MessageBoxResult.Yes)
             {
                 NavigationService?.GoBack();
             }
-        }
-        private void TxtWeight_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            UpdateAddButtonState();
         }
     }
 }

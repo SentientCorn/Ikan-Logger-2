@@ -13,7 +13,7 @@
         </Grid.Background>
         <Button x:Name="btnLogin" Content="Login" Margin="348,520,347,0" 
         Click="Button_Click" Background="{x:Null}" BorderBrush="{x:Null}" 
-        FontFamily="MAUIKEA Demo" FontSize="60" 
+        FontFamily="MAUIKEA Demo" FontSize="50" 
         Cursor="Hand" BorderThickness="0" Padding="0">
 
             <Button.Style>
@@ -49,6 +49,7 @@
         <Label x:Name="lblTitle" Content="Ikan Logger" HorizontalAlignment="Center" Margin="0,305,0,0" VerticalAlignment="Top" Height="150" Width="1000" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF1F4F6E" FontFamily="MAUIKEA Demo" FontSize="150" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <Label x:Name="lblJunpro" Content="Junior Project" HorizontalAlignment="Left" Margin="65,50,0,0" VerticalAlignment="Top" Height="23" Width="190" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF1F4F6E" FontFamily="MAUIKEA Demo" FontSize="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
         <Label x:Name="lblTIF" Content="TIF 2025" HorizontalAlignment="Left" Margin="65,80,0,0" VerticalAlignment="Top" Height="23" Width="100" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF1F4F6E" FontFamily="MAUIKEA Demo" FontSize="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,0"/>
+        <Label x:Name="lblSubtitle" Content="LOGS WHERE YOU FISH" HorizontalAlignment="Center" Margin="0,450,0,0" VerticalAlignment="Top" Height="82" Width="492" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FF1F4F6E" FontFamily="MAUIKEA Demo" FontSize="50" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
 
     </Grid>
