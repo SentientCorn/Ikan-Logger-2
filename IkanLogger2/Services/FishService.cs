@@ -14,19 +14,7 @@ namespace IkanLogger2.Services
             using var conn = await DatabaseService.GetOpenConnectionAsync();
 
             // QUERY BARU: Menggunakan JOIN ke tabel penghubung dan master_fish
-            const string sql = @"
-                SELECT 
-                    l.idlocation,
-                    l.latitude,
-                    l.longitude,
-                    mf.idfish,
-                    mf.fishname,
-                    mf.marketprice
-                FROM location l
-                LEFT JOIN fishlocation map ON map.locid  = l.idlocation
-                LEFT JOIN fish mf ON mf.idfish = map.fishid
-                ORDER BY l.idlocation;
-            ";
+            const string sql = @"SELECT * FROM get_fish_location()";
 
             using var cmd = new NpgsqlCommand(sql, conn);
             var result = new List<FishLocation>();
@@ -74,7 +62,7 @@ namespace IkanLogger2.Services
             var fishes = new List<Fish>();
 
             using var conn = await DatabaseService.GetOpenConnectionAsync();
-            const string sql = "SELECT idfish, fishname, marketprice FROM Fish ORDER BY fishname";
+            const string sql = @"SELECT * FROM get_all_fish()";
 
             using var cmd = new NpgsqlCommand(sql, conn);
             using var reader = await cmd.ExecuteReaderAsync();
