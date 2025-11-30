@@ -36,7 +36,7 @@ namespace IkanLogger2.Views
             {
                 User user = await UserService.LoginAsync(username, password);
 
-                if (user.Id > 0)
+                if (user != null && user.Id > 0)
                 {
                     CustomMessageBox.Show("Login successful!",
                                     "Success",
@@ -47,9 +47,8 @@ namespace IkanLogger2.Views
                 }
                 else
                 {
-                    CustomMessageBox.Show("Invalid username or password.",
-                                    "Login Failed",
-                                    CustomMessageBox.MessageBoxButton.OK);
+                    CustomMessageBox.ShowError("Invalid username or password.",
+                                    "Login Failed");
                 }
             }
             catch (Exception ex)

@@ -76,7 +76,7 @@ namespace IkanLogger2.Views
             }
         }
 
-        // Method baru: Load Recent Logs
+        // Load Recent Logs
         private async Task LoadRecentLogs(int userId)
         {
             try
@@ -131,7 +131,7 @@ namespace IkanLogger2.Views
             }
         }
 
-        // Method baru: Membuat Card untuk setiap Log
+        // Membuat Card untuk setiap Log
         private Border CreateLogCard(CatchLog log)
         {
             var card = new Border
@@ -265,8 +265,6 @@ namespace IkanLogger2.Views
         }
 
         // Menggambar Marker (Dipisah agar bisa dipanggil ulang)
-
-
         private void RenderMarkers(List<FishLocation> locationsToRender)
         {
             // Remove only previous permanent markers (keep temp marker if present)
@@ -306,7 +304,7 @@ namespace IkanLogger2.Views
         }
 
 
-        // Method Baru: Membuat Lingkaran Geografis (Polygon)
+        // Membuat Lingkaran Geografis (Polygon)
         private GMapMarker CreateCirclePolygon(PointLatLng center, double radiusKm)
         {
             List<PointLatLng> points = new List<PointLatLng>();
@@ -337,6 +335,8 @@ namespace IkanLogger2.Views
 
             return polygon;
         }
+
+        // Pin pada peta
         private GMapMarker CreatePinMarker(PointLatLng position, string tooltipText, FishLocation data)
         {
             var marker = new GMapMarker(position)
@@ -451,7 +451,7 @@ namespace IkanLogger2.Views
             {
                 e.Handled = true;
 
-                TxtLocationName.Text = $"Log di {position.Lat:F4}, {position.Lng:F4}";
+                TxtLocationName.Text = $"Tanggal: {log.logdate:dd MMM yyyy}\n" + $"Log di {position.Lat:F4}, {position.Lng:F4}\n";
                 TxtFishList.Text =
                     $"Catatan:\n{log.notes}\n\n" +
                     $"Berat Total: {log.totalweight:N2} kg\n" +
@@ -567,20 +567,15 @@ namespace IkanLogger2.Views
         {
             if (SelectedLatitude == 0 && SelectedLongitude == 0)
             {
-                CustomMessageBox.Show("Silakan pilih lokasi pada peta dengan klik kanan terlebih dahulu.");
+                CustomMessageBox.ShowWarning("Silakan pilih lokasi pada peta dengan klik kanan terlebih dahulu.");
                 return;
             }
             NavigationService?.Navigate(new CreateLogPage(SelectedLatitude, SelectedLongitude));
         }
 
-        private void Records_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService?.Navigate(new RecordsPage());
-        }
-
-        private void Profile_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        //private void Records_Click(object sender, RoutedEventArgs e)
+        //{
+        //    NavigationService?.Navigate(new RecordsPage());
+        //}
     }
 }

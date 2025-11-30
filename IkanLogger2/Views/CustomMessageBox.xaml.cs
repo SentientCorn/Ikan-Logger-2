@@ -216,28 +216,28 @@ namespace IkanLogger2.Views
         }
 
         // Helper methods untuk warna preset
-        public static MessageBoxResult ShowSuccess(string message, string title = "Success")
+        public static MessageBoxResult ShowSuccess(string message, string title = "Success", MessageBoxButton button = MessageBoxButton.OK)
         {
             var greenColor = new SolidColorBrush(Color.FromRgb(34, 139, 34));
-            return Show(message, title, MessageBoxButton.OK, greenColor, greenColor);
+            return Show(message, title, button, greenColor, greenColor);
         }
 
-        public static MessageBoxResult ShowError(string message, string title = "Error")
+        public static MessageBoxResult ShowError(string message, string title = "Error", MessageBoxButton button = MessageBoxButton.OK)
         {
             var redColor = new SolidColorBrush(Color.FromRgb(220, 53, 69));
-            return Show(message, title, MessageBoxButton.OK, redColor, redColor);
+            return Show(message, title, button, redColor, redColor);
         }
 
-        public static MessageBoxResult ShowWarning(string message, string title = "Warning")
+        public static MessageBoxResult ShowWarning(string message, string title = "Warning", MessageBoxButton button = MessageBoxButton.OK)
         {
             var orangeColor = new SolidColorBrush(Color.FromRgb(255, 152, 0));
-            return Show(message, title, MessageBoxButton.OK, orangeColor, orangeColor);
+            return Show(message, title, button, orangeColor, orangeColor);
         }
 
-        public static MessageBoxResult ShowInfo(string message, string title = "Information")
+        public static MessageBoxResult ShowInfo(string message, string title = "Information", MessageBoxButton button = MessageBoxButton.OK)
         {
             var blueColor = new SolidColorBrush(Color.FromRgb(31, 79, 110));
-            return Show(message, title, MessageBoxButton.OK, blueColor, blueColor);
+            return Show(message, title, button, blueColor, blueColor);
         }
     }
 }

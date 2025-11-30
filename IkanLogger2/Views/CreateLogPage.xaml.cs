@@ -423,7 +423,7 @@ namespace IkanLogger2.Views
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            var result = CustomMessageBox.Show(
+            var result = CustomMessageBox.ShowWarning(
                 "Batalkan pembuatan catatan? Data yang sudah diisi akan hilang.",
                 "Konfirmasi",
                 CustomMessageBox.MessageBoxButton.YesNo);

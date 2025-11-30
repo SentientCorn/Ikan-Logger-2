@@ -49,13 +49,13 @@
 
             <!-- Content -->
             <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          Margin="0,160,0,0"
+                          Margin="0,140,0,0"
                           Padding="40,20">
                 <Grid MaxWidth="900" HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="380"/>
+                        <ColumnDefinition Width="450"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Side - Form Input -->
@@ -64,7 +64,8 @@
                             BorderBrush="#FF1F4F6E"
                             BorderThickness="3"
                             CornerRadius="12"
-                            Padding="30">
+                            Padding="30"
+                            Width="400">
 
                         <StackPanel>
                             <TextBlock Text="Informasi Tangkapan" 
@@ -289,7 +290,8 @@
                             BorderBrush="#FF1F4F6E"
                             BorderThickness="3"
                             CornerRadius="12"
-                            Padding="25">
+                            Padding="25"
+                            Width="400">
 
                         <Grid>
                             <Grid.RowDefinitions>
