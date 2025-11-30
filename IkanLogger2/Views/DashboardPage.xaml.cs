@@ -451,7 +451,7 @@ namespace IkanLogger2.Views
             {
                 e.Handled = true;
 
-                TxtLocationName.Text = $"Tanggal: {log.logdate:dd MMM yyyy}\n" + $"Log di {position.Lat:F4}, {position.Lng:F4}\n";
+                TxtLocationName.Text = $"Tanggal: {log.logdate:dd MMM yyyy}\n" + $"Log di {position.Lat:F4}, {position.Lng:F4}";
                 TxtFishList.Text =
                     $"Catatan:\n{log.notes}\n\n" +
                     $"Berat Total: {log.totalweight:N2} kg\n" +
@@ -509,7 +509,7 @@ namespace IkanLogger2.Views
                     string listIkan = "";
                     foreach (var fish in loc.Fishes)
                     {
-                        listIkan += $"• {fish.FishName}\n   Rp {fish.MarketPrice:N0}\n";
+                        listIkan += $"• {fish.FishName}:   Rp {fish.MarketPrice:N0}\n";
                     }
                     TxtFishList.Text = listIkan;
                 }

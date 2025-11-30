@@ -1,10 +1,11 @@
-﻿using System.Linq.Expressions;
+﻿using IkanLogger2.Core;
+using IkanLogger2.Models;
+using IkanLogger2.Services;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using IkanLogger2.Models;
-using IkanLogger2.Services;
-using IkanLogger2.Core;
+using System.Windows.Input;
 
 namespace IkanLogger2.Views
 {
@@ -62,6 +63,13 @@ namespace IkanLogger2.Views
         private void Register_Click(object sender, RoutedEventArgs e)
         {
             NavigationService?.Navigate(new RegisterPage());
+        }
+        private void InputBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Login_Click(sender, e);
+            }
         }
     }
 }

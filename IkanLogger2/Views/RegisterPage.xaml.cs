@@ -1,7 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using IkanLogger2.Models;
 using IkanLogger2.Services;
-using IkanLogger2.Models;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace IkanLogger2.Views
 {
@@ -20,6 +21,7 @@ namespace IkanLogger2.Views
             NavigationService?.Navigate(new LoginPage());
         }
 
+
         private async void Create_Click(object sender, RoutedEventArgs e)
         {
             try {
@@ -29,13 +31,13 @@ namespace IkanLogger2.Views
 
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 {
-                    CustomMessageBox.Show("Username and password cannot be empty.", "Error", CustomMessageBox.MessageBoxButton.OK);
+                    CustomMessageBox.ShowError("Username and password cannot be empty.", "Error");
                     return;
                 }
 
                 if (password != confirmPassword)
                 {
-                    CustomMessageBox.Show("Passwords do not match.", "Error", CustomMessageBox.MessageBoxButton.OK);
+                    CustomMessageBox.ShowError("Passwords do not match.", "Error");
                     return;
                 }
 
@@ -47,17 +49,22 @@ namespace IkanLogger2.Views
                     }
                     else
                     {
-                    CustomMessageBox.Show("Registration failed. Username may already be taken.", "Error", CustomMessageBox.MessageBoxButton.OK);
+                    CustomMessageBox.ShowError("Registration failed. Username may already be taken.", "Error", CustomMessageBox.MessageBoxButton.OK);
                         return;
                     }
             } catch (System.Exception ex) 
             {
-                CustomMessageBox.Show($"An error occurred: {ex.Message}", "Error", CustomMessageBox.MessageBoxButton.OK);
+                CustomMessageBox.ShowError($"An error occurred: {ex.Message}", "Error");
                 return;
             }
-
-
             NavigationService?.Navigate(new LoginPage());
+        }
+        private void InputBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Create_Click(sender, e);
+            }
         }
     }
 
