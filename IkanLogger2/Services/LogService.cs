@@ -16,13 +16,7 @@ namespace IkanLogger2.Services
             
             using var conn = await DatabaseService.GetOpenConnectionAsync();
 
-            const string sql = @"
-            SELECT logdate, notes, totalweight, totalprice, latitude, longitude
-            FROM catchlog 
-            WHERE iduser = @uid
-            ORDER BY logdate DESC 
-            LIMIT 3
-            ";
+            const string sql = @"SELECT * FROM get_user_recent_catchlog(@uid)";
 
             using var cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@uid", userid);
@@ -50,27 +44,10 @@ namespace IkanLogger2.Services
             using var conn = await DatabaseService.GetOpenConnectionAsync();
 
             // Query dengan JOIN untuk ambil semua data sekaligus
-            const string sql = @"
-            SELECT 
-                cl.idlog,
-                cl.logdate,
-                cl.notes,
-                cl.totalweight,
-                cl.totalprice,
-                cl.latitude,
-                cl.longitude,
-                fc.idfishcatch,
-                fc.weight,
-                fc.saleprice,
-                f.fishname
-            FROM CatchLog cl
-            LEFT JOIN FishCatch fc ON cl.idlog = fc.idlog
-            LEFT JOIN Fish f ON fc.fishid = f.idfish
-            WHERE cl.iduser = @UserId
-            ORDER BY cl.logdate DESC, f.fishname";
+            const string sql = @"SELECT * FROM get_user_all_catchlog_detail(@uid)";
 
             using var cmd = new NpgsqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@UserId", userid);
+            cmd.Parameters.AddWithValue("@uid", userid);
 
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -126,10 +103,7 @@ namespace IkanLogger2.Services
                 double totalPrice = catches.Sum(c => c.SalePrice);
 
                 // Insert CatchLog
-                const string logSql = @"
-                    INSERT INTO CatchLog (logdate, notes, iduser, totalweight, totalprice, latitude, longitude)
-                    VALUES (@LogDate, @Notes, @UserId, @TotalWeight, @TotalPrice, @Latitude, @Longitude)
-                    RETURNING idlog";
+                const string logSql = @"SELECT insert_user_catchlog(@LogDate, @Notes, @UserId, @TotalWeight, @TotalPrice, @Latitude, @Longitude)";
 
 
                 int logId;
